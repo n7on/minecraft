@@ -1,0 +1,16 @@
+[Unit]
+Description=Telegram bot for controlling the Minecraft server (via Claude Code)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=anton
+WorkingDirectory=/home/anton/stacks/minecraft/telegram-bot
+EnvironmentFile=/home/anton/stacks/minecraft/telegram-bot/.env
+ExecStart=/usr/bin/python3 /home/anton/stacks/minecraft/telegram-bot/bot.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

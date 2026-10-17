@@ -2,3 +2,9 @@
 # downloaded server jar/plugins/libraries, cache, logs, and player data
 # (whitelist/ops/bans). Regenerated on start or managed in-game — not tracked.
 data/
+
+# Telegram bot secrets and runtime state
+telegram-bot/.env
+telegram-bot/state.json
+telegram-bot/bot.log
+telegram-bot/__pycache__/
