@@ -36,13 +36,18 @@ Docker host, so you talk to it in plain English rather than typing commands.
 Only specific Telegram accounts are allowed to use it — ask an admin to add
 your Telegram user ID if you should have access.
 
-Example things you can say to it:
+Its main job is changing how the server is configured — it edits
+`docker-compose.yml`, commits the change, and applies it. For example:
 
-- "how's the server doing? any errors in the logs?"
-- "restart the server"
+- "add the Dynmap plugin"
+- "increase memory to 6G, we're getting lag with everyone on"
+- "set view distance to 12"
+- "change the MOTD to 'back up, survival world reset this weekend'"
 - "add someone to the whitelist: their username is X"
-- "bump view distance to 12 and apply it"
-- "take the server down for maintenance"
+- "disable anti-xray in the nether, it's not needed there"
+
+It can also just check in on things ("how's the server doing? any errors in
+the logs?") or restart it to apply a change.
 
 Routine stuff (checking status/logs, restarting, editing config, whitelist)
 happens immediately. Anything destructive or hard to undo — stopping the
