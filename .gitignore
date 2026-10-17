@@ -1,0 +1,4 @@
+# Runtime state for the itzg/docker-minecraft-server container: world saves,
+# downloaded server jar/plugins/libraries, cache, logs, and player data
+# (whitelist/ops/bans). Regenerated on start or managed in-game — not tracked.
+data/

@@ -1,0 +1,177 @@
+services:
+  # Applies Paper settings (anti-xray, entity collisions; defined under "configs" at the bottom)
+  # before the server starts. Merges into Paper's configs, so everything else is kept.
+  anti-xray:
+    image: mikefarah/yq:4
+    container_name: minecraft-anti-xray
+    restart: "no"
+    working_dir: /workdir
+    volumes:
+      - ./data:/workdir
+    configs:
+      - source: anti-xray-overworld
+        target: /patches/overworld.yml
+      - source: anti-xray-nether
+        target: /patches/nether.yml
+      - source: paper-global
+        target: /patches/global.yml
+      - source: spigot
+        target: /patches/spigot.yml
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        set -e
+        apply() {
+          if [ -f "$$1" ]; then
+            yq -i ". *= load(\"$$2\")" "$$1" && echo "paper settings applied: $$1"
+          else
+            echo "skip: $$1 not created yet (run 'docker compose up -d' again later)"
+          fi
+        }
+        apply config/paper-world-defaults.yml /patches/overworld.yml
+        apply world_nether/paper-world.yml    /patches/nether.yml
+        apply config/paper-global.yml         /patches/global.yml
+        apply spigot.yml                      /patches/spigot.yml
+
+  minecraft:
+    image: itzg/minecraft-server:latest
+    container_name: minecraft
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
+    stop_grace_period: 60s        # give the server time to save the world on shutdown
+    depends_on:
+      anti-xray:
+        condition: service_completed_successfully
+
+    ports:
+      - "25565:25565"             # Java Edition; RCON stays internal (use: docker exec -it minecraft rcon-cli)
+      - "19132:19132/udp"         # Bedrock Edition via Geyser (UDP only)
+
+    environment:
+      EULA: "TRUE"
+      TYPE: "PAPER"               # much lighter than vanilla; same client compatibility
+      VERSION: "1.21.11"
+      MEMORY: "4G"                # JVM heap (sets both -Xms and -Xmx)
+      USE_AIKAR_FLAGS: "true"     # tuned G1GC flags, reduces lag spikes
+      TZ: "Europe/Stockholm"
+
+      # Server settings
+      MAX_PLAYERS: "10"
+      VIEW_DISTANCE: "10"         # biggest single lever on RAM/CPU per player; must be >= simulation distance
+      SIMULATION_DISTANCE: "10"   # vanilla default; mob farms (gold farm) are designed for this
+      DIFFICULTY: "normal"
+      MOTD: "Minecraft server"
+
+      # Access control
+      ONLINE_MODE: "TRUE"         # require real Microsoft accounts
+      ENABLE_WHITELIST: "TRUE"    # only listed players can join
+      ENFORCE_WHITELIST: "TRUE"   # kick players removed from the list immediately
+      OPS: "an7dud"               # comma-separated admins (can /kick, /ban, /whitelist add)
+      # Manage the list in-game: /whitelist add <name>  (saved in data/whitelist.json)
+      # Bedrock players: /fwhitelist add <xbox gamertag>  (they show up in-game as .<gamertag>)
+
+      # Plugins (server-side only; players need no client changes)
+      # Downloaded from Modrinth on start; add more slugs on new lines (modrinth.com/plugin/<slug>)
+      # viaversion is required by Geyser: it connects as the newest Java client (26.x)
+      # grimac removed: its packetevents kicks 26.x clients (incl. Geyser/Bedrock) on a
+      # 1.21.11 server with "invalid packet". Re-add when fixed or after upgrading the server.
+      MODRINTH_PROJECTS: |
+        essentialsx
+        viaversion
+
+      # Bedrock support: Geyser translates Bedrock <-> Java, Floodgate lets Bedrock
+      # players join with their Xbox account (no Java account needed).
+      # Official GeyserMC builds, latest version on each start.
+      PLUGINS: |
+        https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot
+        https://download.geysermc.org/v2/projects/floodgate/versions/latest/builds/latest/downloads/spigot
+
+    volumes:
+      - ./data:/data
+
+    deploy:
+      resources:
+        limits:
+          memory: 5G              # hard cap: heap + ~1G for JVM overhead (metaspace, threads, native buffers)
+          cpus: "3.0"
+        reservations:
+          memory: 4G
+
+# Paper settings, merged into Paper's config files by the anti-xray service.
+# "anti-xray-overworld" goes into paper-world-defaults.yml, so it applies to every world
+# unless a world overrides it; "paper-global" goes into paper-global.yml.
+# Edit here, then run "docker compose stop minecraft && docker compose up -d" to apply.
+configs:
+  spigot:
+    content: |
+      world-settings:
+        default:
+          entity-activation-range:
+            monsters: 64            # default 32; mobs further from players barely tick (farms stall)
+            flying-monsters: 64     # default 32; ghasts, phantoms
+
+  paper-global:
+    content: |
+      unsupported-settings:
+        allow-piston-duplication: true   # re-enables vanilla TNT, carpet and rail duping
+        allow-headless-pistons: true     # headless pistons (can break bedrock/end portal frames)
+        allow-unsafe-end-portal-teleportation: true   # re-enables sand/gravel duping via end portals
+
+  anti-xray-overworld:
+    content: |
+      collisions:
+        max-entity-collisions: 32   # default 8; must exceed max_entity_cramming (24) for cramming farms
+      anticheat:
+        anti-xray:
+          enabled: true
+          engine-mode: 2            # fills hidden areas with fake ores
+          max-block-height: 64
+          update-radius: 2
+          lava-obscures: false
+          use-permission: false
+          hidden-blocks:
+            - copper_ore
+            - deepslate_copper_ore
+            - raw_copper_block
+            - gold_ore
+            - deepslate_gold_ore
+            - iron_ore
+            - deepslate_iron_ore
+            - raw_iron_block
+            - coal_ore
+            - deepslate_coal_ore
+            - lapis_ore
+            - deepslate_lapis_ore
+            - redstone_ore
+            - deepslate_redstone_ore
+            - diamond_ore
+            - deepslate_diamond_ore
+            - emerald_ore
+            - deepslate_emerald_ore
+            - mossy_cobblestone
+            - chest
+            - spawner
+          replacement-blocks:
+            - stone
+            - oak_planks
+            - deepslate
+
+  anti-xray-nether:
+    content: |
+      anticheat:
+        anti-xray:
+          enabled: true
+          engine-mode: 2
+          max-block-height: 128
+          update-radius: 2
+          lava-obscures: false
+          use-permission: false
+          hidden-blocks:
+            - ancient_debris
+            - nether_gold_ore
+            - nether_quartz_ore
+          replacement-blocks:
+            - netherrack
+            - basalt
+            - blackstone
