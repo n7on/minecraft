@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 """Telegram <-> Claude Code bridge for admin'ing the Minecraft server.
 
-Each authorized Telegram message is forwarded as a prompt to `claude -p`,
-run with cwd set to the project directory, using bot-settings.json's
-allow/deny list. Anything not explicitly allowed is auto-denied (no human
-to prompt); a denial is surfaced back to the chat as a yes/no confirmation
-ask, and a "yes" reply resumes the same Claude session with
---permission-mode bypassPermissions for that one turn to complete it.
+Two access tiers, keyed by Telegram user ID:
+
+- ADMIN_USER_IDS: full control. Each message runs `claude -p` with
+  bot-settings.json's allow/deny list. Anything not explicitly allowed is
+  auto-denied (no human to prompt); a denial is surfaced as a yes/no
+  confirmation ask, and "yes" resumes the same session with
+  --permission-mode bypassPermissions for that one turn to complete it.
+- READONLY_USER_IDS: information only. Runs with --tools Read,Glob,Grep,
+  which removes Bash/Edit/Write from the session entirely -- there is no
+  shell to chain commands in, so this can't be escalated no matter what's
+  asked (a narrow Bash allow-list alone isn't enough: pattern matching is a
+  prefix match on the whole command string, so e.g. an allow-list for
+  "echo *" still lets "echo hi && whoami" run -- verified empirically).
 """
 import json
 import os
 import subprocess
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -19,7 +27,8 @@ BOT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = os.environ.get("PROJECT_DIR", str(BOT_DIR.parent))
 CLAUDE_BIN = os.environ.get("CLAUDE_BIN", "/home/anton/.local/bin/claude")
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-ALLOWED_USER_IDS = {int(x) for x in os.environ.get("ALLOWED_USER_IDS", "").split(",") if x.strip()}
+ADMIN_USER_IDS = {int(x) for x in os.environ.get("ALLOWED_USER_IDS", "").split(",") if x.strip()}
+READONLY_USER_IDS = {int(x) for x in os.environ.get("READONLY_USER_IDS", "").split(",") if x.strip()}
 SETTINGS_FILE = str(BOT_DIR / "bot-settings.json")
 STATE_FILE = BOT_DIR / "state.json"
 LOG_FILE = BOT_DIR / "bot.log"
@@ -28,7 +37,7 @@ API_BASE = f"https://api.telegram.org/bot{BOT_TOKEN}"
 AFFIRM = {"yes", "y", "confirm", "go ahead", "do it", "proceed"}
 DENY = {"no", "n", "cancel", "stop", "don't", "dont"}
 
-SYSTEM_PROMPT = (
+ADMIN_SYSTEM_PROMPT = (
     "You are controlling a docker-compose Minecraft server (itzg/minecraft-server) "
     "for the admin's son and his friends, via Telegram messages from the admin. "
     "The project directory (docker-compose.yml, README.md) is your working directory. "
@@ -39,6 +48,19 @@ SYSTEM_PROMPT = (
     "parsing): no asterisks, headers, or backticks for formatting. If you edit docker-compose.yml, briefly "
     "say what changed and that 'docker compose up -d' is needed to apply it (you can "
     "run that yourself)."
+)
+
+READONLY_SYSTEM_PROMPT = (
+    "You are answering questions about a docker-compose Minecraft server "
+    "(itzg/minecraft-server) for one of the players' friends, via Telegram. You have "
+    "read-only file access to the project directory: docker-compose.yml (settings, "
+    "plugins), README.md, and data/logs/ (server logs) -- no shell, no edit/write, no "
+    "ability to change anything, so nothing you do can affect the server. Use this to "
+    "answer things like current settings, recent errors, how to join, who's "
+    "whitelisted, etc. If asked to change something, restart the server, or run a "
+    "command, say plainly that you don't have permission for that and they should ask "
+    "an admin instead -- don't imply you did something you didn't. Keep replies short "
+    "and plain text (Telegram chat, no markdown formatting)."
 )
 
 
@@ -64,7 +86,10 @@ def api_call(method, params, timeout=35):
     data = json.dumps(params).encode()
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read())
+        body = json.loads(resp.read())
+    if not body.get("ok"):
+        raise RuntimeError(f"Telegram API {method} returned not-ok: {body}")
+    return body
 
 
 def send_message(chat_id, text):
@@ -73,17 +98,23 @@ def send_message(chat_id, text):
         chunk = text[i:i + 4000]
         try:
             api_call("sendMessage", {"chat_id": chat_id, "text": chunk})
+        except urllib.error.HTTPError as e:
+            log(f"sendMessage failed: HTTP {e.code} body={e.read()[:500]!r}")
         except Exception as e:
-            log(f"sendMessage failed: {e}")
+            log(f"sendMessage failed: {e!r}")
 
 
-def run_claude(prompt, session_id=None, bypass=False):
-    cmd = [CLAUDE_BIN, "-p", prompt, "--output-format", "json",
-           "--settings", SETTINGS_FILE, "--append-system-prompt", SYSTEM_PROMPT]
-    if bypass:
-        cmd += ["--permission-mode", "bypassPermissions"]
+def run_claude(prompt, session_id=None, bypass=False, readonly=False):
+    cmd = [CLAUDE_BIN, "-p", prompt, "--output-format", "json"]
+    if readonly:
+        cmd += ["--tools", "Read,Glob,Grep", "--append-system-prompt", READONLY_SYSTEM_PROMPT,
+                "--permission-mode", "dontAsk", "--permission-prompts", "none"]
     else:
-        cmd += ["--permission-mode", "dontAsk", "--permission-prompts", "none"]
+        cmd += ["--settings", SETTINGS_FILE, "--append-system-prompt", ADMIN_SYSTEM_PROMPT]
+        if bypass:
+            cmd += ["--permission-mode", "bypassPermissions"]
+        else:
+            cmd += ["--permission-mode", "dontAsk", "--permission-prompts", "none"]
     if session_id:
         cmd += ["--resume", session_id]
 
@@ -119,7 +150,11 @@ def describe_denials(denials):
 
 
 def handle_message(chat_id, user_id, text, state):
-    if user_id not in ALLOWED_USER_IDS:
+    if user_id in ADMIN_USER_IDS:
+        tier = "admin"
+    elif user_id in READONLY_USER_IDS:
+        tier = "readonly"
+    else:
         log(f"UNAUTHORIZED user_id={user_id} chat_id={chat_id} text={text!r}")
         send_message(chat_id, "Not authorized.")
         return
@@ -131,6 +166,14 @@ def handle_message(chat_id, user_id, text, state):
     if normalized == "/new":
         state[chat_key] = {"session_id": None, "pending": False}
         send_message(chat_id, "Started a new conversation.")
+        return
+
+    if tier == "readonly":
+        resp = run_claude(text, chat_state["session_id"], readonly=True)
+        chat_state["session_id"] = resp.get("session_id", chat_state["session_id"])
+        chat_state["pending"] = False
+        state[chat_key] = chat_state
+        send_message(chat_id, resp.get("result", "(no response)"))
         return
 
     if chat_state["pending"] and normalized in AFFIRM:

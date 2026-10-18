@@ -34,7 +34,9 @@ on Telegram. It's an AI agent (Claude) with real access to this repo and the
 Docker host, so you talk to it in plain English rather than typing commands.
 
 Only specific Telegram accounts are allowed to use it — ask an admin to add
-your Telegram user ID if you should have access.
+your Telegram user ID if you should have access. Most people get a read-only
+tier: they can ask it questions but it has no ability to change or restart
+anything for them.
 
 Its main job is changing how the server is configured — it edits
 `docker-compose.yml`, commits the change, and applies it. For example:
