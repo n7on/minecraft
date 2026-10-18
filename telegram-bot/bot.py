@@ -47,7 +47,17 @@ ADMIN_SYSTEM_PROMPT = (
     "Keep replies short and plain text (this is a Telegram chat, sent with no markdown "
     "parsing): no asterisks, headers, or backticks for formatting. If you edit docker-compose.yml, briefly "
     "say what changed and that 'docker compose up -d' is needed to apply it (you can "
-    "run that yourself)."
+    "run that yourself).\n\n"
+    "For casual questions about what's happening in-game (is anyone on, is there a mob "
+    "farm running, where's a player, etc.), budget at most about a minute of tool use: "
+    "use one or two targeted rcon-cli commands (e.g. 'list', 'data get entity <player> "
+    "Pos') and answer with whatever that tells you. Do not loop over every mob type "
+    "across every dimension, do not write a custom parser for the world save files "
+    "(region/NBT format) to scan chunks -- that's slow, expensive, and not what a chat "
+    "answer needs. If there's no fast way to check something precisely, just say so and "
+    "give your best guess from what you can see quickly, rather than spending minutes on "
+    "an exhaustive investigation. Only go deep if the admin explicitly asks for a "
+    "thorough investigation."
 )
 
 READONLY_SYSTEM_PROMPT = (
@@ -104,7 +114,11 @@ def send_message(chat_id, text):
             log(f"sendMessage failed: {e!r}")
 
 
-def run_claude(prompt, session_id=None, bypass=False, readonly=False):
+TIMEOUT_SECONDS = 900
+TYPING_INTERVAL_SECONDS = 4
+
+
+def run_claude(prompt, session_id=None, bypass=False, readonly=False, chat_id=None):
     cmd = [CLAUDE_BIN, "-p", prompt, "--output-format", "json"]
     if readonly:
         cmd += ["--tools", "Read,Glob,Grep", "--append-system-prompt", READONLY_SYSTEM_PROMPT,
@@ -119,20 +133,35 @@ def run_claude(prompt, session_id=None, bypass=False, readonly=False):
         cmd += ["--resume", session_id]
 
     log(f"-> session={session_id} bypass={bypass} prompt={prompt!r}")
-    try:
-        result = subprocess.run(cmd, cwd=PROJECT_DIR, capture_output=True, text=True, timeout=900)
-    except subprocess.TimeoutExpired:
-        log("claude invocation timed out")
-        return {"result": "Timed out waiting for Claude.", "session_id": session_id, "permission_denials": []}
+    proc = subprocess.Popen(cmd, cwd=PROJECT_DIR, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    start = time.time()
+    last_typing = 0
+    stdout = stderr = ""
+    while True:
+        if chat_id and time.time() - last_typing >= TYPING_INTERVAL_SECONDS:
+            try:
+                api_call("sendChatAction", {"chat_id": chat_id, "action": "typing"})
+            except Exception:
+                pass
+            last_typing = time.time()
+        try:
+            stdout, stderr = proc.communicate(timeout=TYPING_INTERVAL_SECONDS)
+            break
+        except subprocess.TimeoutExpired:
+            if time.time() - start > TIMEOUT_SECONDS:
+                proc.kill()
+                proc.communicate()
+                log("claude invocation timed out")
+                return {"result": "Timed out waiting for Claude.", "session_id": session_id, "permission_denials": []}
 
-    if result.returncode != 0:
-        log(f"claude exited {result.returncode}: {result.stderr[-2000:]}")
-        return {"result": f"Internal error (exit {result.returncode}). Check bot.log.",
+    if proc.returncode != 0:
+        log(f"claude exited {proc.returncode}: {stderr[-2000:]}")
+        return {"result": f"Internal error (exit {proc.returncode}). Check bot.log.",
                 "session_id": session_id, "permission_denials": []}
     try:
-        data = json.loads(result.stdout)
+        data = json.loads(stdout)
     except json.JSONDecodeError:
-        log(f"bad json from claude: {result.stdout[-2000:]}")
+        log(f"bad json from claude: {stdout[-2000:]}")
         return {"result": "Internal error: couldn't parse Claude's response.",
                 "session_id": session_id, "permission_denials": []}
     log(f"<- session={data.get('session_id')} denials={len(data.get('permission_denials') or [])} "
@@ -169,7 +198,7 @@ def handle_message(chat_id, user_id, text, state):
         return
 
     if tier == "readonly":
-        resp = run_claude(text, chat_state["session_id"], readonly=True)
+        resp = run_claude(text, chat_state["session_id"], readonly=True, chat_id=chat_id)
         chat_state["session_id"] = resp.get("session_id", chat_state["session_id"])
         chat_state["pending"] = False
         state[chat_key] = chat_state
@@ -177,11 +206,11 @@ def handle_message(chat_id, user_id, text, state):
         return
 
     if chat_state["pending"] and normalized in AFFIRM:
-        resp = run_claude("Yes, proceed with that action.", chat_state["session_id"], bypass=True)
+        resp = run_claude("Yes, proceed with that action.", chat_state["session_id"], bypass=True, chat_id=chat_id)
     elif chat_state["pending"] and normalized in DENY:
-        resp = run_claude("No, don't do that. Cancel the pending action.", chat_state["session_id"], bypass=False)
+        resp = run_claude("No, don't do that. Cancel the pending action.", chat_state["session_id"], bypass=False, chat_id=chat_id)
     else:
-        resp = run_claude(text, chat_state["session_id"], bypass=False)
+        resp = run_claude(text, chat_state["session_id"], bypass=False, chat_id=chat_id)
 
     chat_state["session_id"] = resp.get("session_id", chat_state["session_id"])
     denials = resp.get("permission_denials") or []
