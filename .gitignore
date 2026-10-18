@@ -8,3 +8,7 @@ telegram-bot/.env
 telegram-bot/state.json
 telegram-bot/bot.log
 telegram-bot/__pycache__/
+
+# World backups and the RCON password shared by minecraft and backups
+backups/
+rcon_password

@@ -55,6 +55,7 @@ services:
       MEMORY: "4G"                # JVM heap (sets both -Xms and -Xmx)
       USE_AIKAR_FLAGS: "true"     # tuned G1GC flags, reduces lag spikes
       TZ: "Europe/Stockholm"
+      RCON_PASSWORD_FILE: /run/secrets/rcon_password   # shared with the backups service
 
       # Server settings
       MAX_PLAYERS: "10"
@@ -89,6 +90,8 @@ services:
 
     volumes:
       - ./data:/data
+    secrets:
+      - rcon_password
 
     deploy:
       resources:
@@ -97,6 +100,35 @@ services:
           cpus: "3.0"
         reservations:
           memory: 4G
+
+  # World backups: tar.gz every 6h into ./backups, kept 7 days. Uses RCON to pause
+  # autosave during the copy. Skips the backup if nobody has played since the last one.
+  # Restore: stop minecraft, extract a backup over ./data, start again.
+  backups:
+    image: itzg/mc-backup:latest
+    container_name: minecraft-backups
+    restart: unless-stopped
+    depends_on:
+      - minecraft
+    environment:
+      TZ: "Europe/Stockholm"
+      RCON_HOST: minecraft
+      RCON_PASSWORD_FILE: /run/secrets/rcon_password
+      BACKUP_INTERVAL: "6h"
+      INITIAL_DELAY: "5m"
+      PRUNE_BACKUPS_DAYS: "7"
+      PAUSE_IF_NO_PLAYERS: "true"
+      BACKUP_METHOD: tar
+      EXCLUDES: "*.jar,cache,.cache,libraries,logs,versions"
+    volumes:
+      - ./data:/data:ro
+      - ./backups:/backups
+    secrets:
+      - rcon_password
+
+secrets:
+  rcon_password:
+    file: ./rcon_password       # random, gitignored; generate with: openssl rand -hex 24 > rcon_password
 
 # Paper settings, merged into Paper's config files by the anti-xray service.
 # "anti-xray-overworld" goes into paper-world-defaults.yml, so it applies to every world
