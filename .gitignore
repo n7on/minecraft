@@ -5,6 +5,7 @@ data/
 
 # Telegram bot secrets and runtime state
 telegram-bot/.env
+telegram-bot/minecraft-telegram-bot.service
 telegram-bot/state.json
 telegram-bot/bot.log
 telegram-bot/__pycache__/

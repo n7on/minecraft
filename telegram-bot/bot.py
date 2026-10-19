@@ -17,6 +17,7 @@ Two access tiers, keyed by Telegram user ID:
 """
 import json
 import os
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -25,7 +26,7 @@ from pathlib import Path
 
 BOT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = os.environ.get("PROJECT_DIR", str(BOT_DIR.parent))
-CLAUDE_BIN = os.environ.get("CLAUDE_BIN", "/home/anton/.local/bin/claude")
+CLAUDE_BIN = os.environ.get("CLAUDE_BIN") or shutil.which("claude") or str(Path.home() / ".local/bin/claude")
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 ADMIN_USER_IDS = {int(x) for x in os.environ.get("ALLOWED_USER_IDS", "").split(",") if x.strip()}
 READONLY_USER_IDS = {int(x) for x in os.environ.get("READONLY_USER_IDS", "").split(",") if x.strip()}

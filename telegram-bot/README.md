@@ -38,8 +38,11 @@ logs, etc. Uses your existing Claude Code login — no separate API key needed.
    cp .env.example .env
    # edit .env: set BOT_TOKEN, ALLOWED_USER_IDS, and (optionally) READONLY_USER_IDS
    ```
-4. **Install the systemd service:**
+4. **Install the systemd service:** copy the template, fill in your username
+   and the absolute path to this project, then install it:
    ```sh
+   cp minecraft-telegram-bot.service.example minecraft-telegram-bot.service
+   # edit minecraft-telegram-bot.service: replace YOUR_USERNAME and /path/to/minecraft
    sudo cp minecraft-telegram-bot.service /etc/systemd/system/
    sudo systemctl daemon-reload
    sudo systemctl enable --now minecraft-telegram-bot
@@ -67,6 +70,7 @@ don't have permission for that, ask an admin."
 - `bot.py` — the bot (stdlib only, no pip install needed)
 - `bot-settings.json` — Claude Code permission allow/deny list used for every
   invocation
-- `minecraft-telegram-bot.service` — systemd unit template
+- `minecraft-telegram-bot.service.example` — systemd unit template
+  (`minecraft-telegram-bot.service`, your filled-in copy, is gitignored)
 - `.env` — secrets (gitignored; copy from `.env.example`)
 - `state.json`, `bot.log` — runtime state and audit log (gitignored)
