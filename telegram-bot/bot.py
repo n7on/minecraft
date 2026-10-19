@@ -141,8 +141,8 @@ def run_claude(prompt, session_id=None, bypass=False, readonly=False, chat_id=No
         if chat_id and time.time() - last_typing >= TYPING_INTERVAL_SECONDS:
             try:
                 api_call("sendChatAction", {"chat_id": chat_id, "action": "typing"})
-            except Exception:
-                pass
+            except Exception as e:
+                log(f"sendChatAction failed: {e!r}")
             last_typing = time.time()
         try:
             stdout, stderr = proc.communicate(timeout=TYPING_INTERVAL_SECONDS)
