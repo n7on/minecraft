@@ -52,13 +52,13 @@ services:
       EULA: "TRUE"
       TYPE: "PAPER"               # much lighter than vanilla; same client compatibility
       VERSION: "1.21.11"
-      MEMORY: "4G"                # JVM heap (sets both -Xms and -Xmx)
+      MEMORY: "6G"                # JVM heap (sets both -Xms and -Xmx)
       USE_AIKAR_FLAGS: "true"     # tuned G1GC flags, reduces lag spikes
       TZ: "Europe/Stockholm"
       RCON_PASSWORD_FILE: /run/secrets/rcon_password   # shared with the backups service
 
       # Server settings
-      MAX_PLAYERS: "10"
+      MAX_PLAYERS: "18"
       VIEW_DISTANCE: "10"         # biggest single lever on RAM/CPU per player; must be >= simulation distance
       SIMULATION_DISTANCE: "10"   # vanilla default; mob farms (gold farm) are designed for this
       DIFFICULTY: "normal"
@@ -96,10 +96,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 5G              # hard cap: heap + ~1G for JVM overhead (metaspace, threads, native buffers)
+          memory: 8G              # hard cap: heap + ~2G for JVM overhead (metaspace, threads, native buffers)
           cpus: "3.0"
         reservations:
-          memory: 4G
+          memory: 6G
 
   # World backups: tar.gz every 6h into ./backups, kept 7 days. Uses RCON to pause
   # autosave during the copy. Skips the backup if nobody has played since the last one.
