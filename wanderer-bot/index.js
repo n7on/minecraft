@@ -113,11 +113,15 @@ Only when "alone_with_favorite" is true below may a little more warmth
 show through, still in your strange, riddling way, never plainly stated.` : '';
 
 const SYSTEM_PROMPT = `You play a character visiting a family Minecraft server for a short while: a
-cryptic wanderer. You speak rarely, and when you do, it's riddles, odd
-philosophical observations, or strange questions -- never plain smalltalk.
-You seem to notice things about the world that others miss. You're
-melancholic and mysterious, not mean or scary: a benign oddity, not a threat.
-You have no combat ability -- never try to fight, just move away from danger.
+quiet wanderer with a bit of a mysterious streak. Talk normally and
+helpfully most of the time -- answer questions plainly, have a real
+conversation -- but every so often let something a little odd or cryptic
+slip through (a strange observation, an odd turn of phrase), rather than
+doing that on every single line. You're a bit melancholic and mysterious at
+the edges, not mean or scary: a benign oddity, not a threat. You have no
+combat ability -- never try to fight, just move away from danger.
+
+Speak Swedish by default, unless someone talks to you in another language.
 
 Hard rule, non-negotiable: if you have ever committed to something in chat (a
 promise -- "I will bring you an emerald," "meet me at dusk by the oak"), you
@@ -321,26 +325,47 @@ function main() {
   let lastApproachPos = null;
   let lastApproachAt = null;
 
-  bot.once('spawn', async () => {
-    const movements = new Movements(bot);
-    // Never dig/place blocks: avoids fighting spawn-protection (and anywhere
-    // else building is restricted), and fits the character better anyway --
-    // a wanderer that walks the land as it is, not one that digs through it.
-    movements.canDig = false;
-    movements.allow1by1towers = false;
-    bot.pathfinder.setMovements(movements);
-    log(`spawned as ${bot.username}`);
-
+  // Runs on the initial join AND every respawn after death -- dying resets
+  // position to the vanilla (unwalkable) spawn point just like joining does,
+  // and 'spawn' only ever fires once per connection, so without this a death
+  // silently strands it right back where it started.
+  async function escapeSpawnPoint() {
     try {
       await rcon(`tp ${bot.username} ${SAFE_SPAWN_ANCHOR.x} ${SAFE_SPAWN_ANCHOR.y} ${SAFE_SPAWN_ANCHOR.z}`);
       log('moved off the unwalkable vanilla spawn point to the safe anchor');
     } catch (e) {
       log(`failed to teleport off spawn point: ${e}`);
     }
+  }
+
+  bot.on('respawn', () => {
+    log('respawned (died and came back) -- re-escaping spawn point');
+    escapeSpawnPoint();
+  });
+
+  bot.once('spawn', async () => {
+    // Digging/placing left at mineflayer-pathfinder's defaults (both on): a
+    // ~6000-block walk hits rivers, cliffs, etc. and needs that to actually
+    // get anywhere. Disabling it entirely (tried first) just traded "stuck
+    // at the spawn-protection boundary" for "stuck at the next ordinary
+    // obstacle" -- it wasn't really about protection, it just needs to be
+    // able to do normal Minecraft traversal. The teleport off the actual
+    // spawn point below is what matters for avoiding protection specifically.
+    bot.pathfinder.setMovements(new Movements(bot));
+    log(`spawned as ${bot.username}`);
+
+    await escapeSpawnPoint();
 
     const idleTimer = setInterval(() => {
       decideAndApply(bot, recentChat);
     }, IDLE_TICK_MINUTES * 60 * 1000);
+
+    const heartbeatTimer = setInterval(() => {
+      const p = bot.entity.position;
+      log(`heartbeat: pos=${p.x.toFixed(1)},${p.y.toFixed(1)},${p.z.toFixed(1)} onGround=${bot.entity.onGround} ` +
+          `isMoving=${bot.pathfinder.isMoving()} isMining=${bot.pathfinder.isMining()} isBuilding=${bot.pathfinder.isBuilding()} ` +
+          `velocity=${bot.entity.velocity.x.toFixed(2)},${bot.entity.velocity.y.toFixed(2)},${bot.entity.velocity.z.toFixed(2)}`);
+    }, 10000);
 
     const directiveTimer = setInterval(async () => {
       const directive = loadDirective();
@@ -389,6 +414,7 @@ function main() {
     if (SESSION_MINUTES > 0) {
       sessionTimer = setTimeout(() => {
         clearInterval(idleTimer);
+        clearInterval(heartbeatTimer);
         clearInterval(directiveTimer);
         farewellAndQuit(bot, recentChat, 'session timer elapsed');
       }, SESSION_MINUTES * 60 * 1000);
@@ -396,6 +422,7 @@ function main() {
 
     const shutdown = (signal) => {
       clearInterval(idleTimer);
+      clearInterval(heartbeatTimer);
       clearInterval(directiveTimer);
       if (sessionTimer) clearTimeout(sessionTimer);
       farewellAndQuit(bot, recentChat, `received ${signal}`);
