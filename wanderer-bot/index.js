@@ -43,9 +43,9 @@ if (!MC_USERNAME) {
 }
 
 function log(msg) {
-  const line = `${new Date().toISOString()} ${msg}\n`;
-  fs.appendFileSync(LOG_FILE, line);
-  process.stdout.write(line);
+  // Only write directly to LOG_FILE, not stdout too: watch.sh redirects this
+  // process's stdout into the same file, so writing both doubles every line.
+  fs.appendFileSync(LOG_FILE, `${new Date().toISOString()} ${msg}\n`);
 }
 
 function loadPromises() {
@@ -69,6 +69,35 @@ function loadDirective() {
     return null;
   }
 }
+
+async function rcon(command) {
+  const { stdout } = await execFileAsync('docker', ['exec', 'minecraft', 'rcon-cli', command], { timeout: 5000 });
+  return stdout;
+}
+
+// mineflayer only has a player's live position once their entity is close
+// enough to be loaded client-side -- useless for travelling to someone who's
+// thousands of blocks away. RCON works regardless of distance, so it's how
+// we get a heading for the long haul; once close enough that the entity
+// actually loads, we switch to following that directly (see directiveTimer).
+async function fetchPlayerPosViaRcon(name) {
+  try {
+    const stdout = await rcon(`data get entity ${name} Pos`);
+    const m = stdout.match(/\[([-\d.]+)d, ([-\d.]+)d, ([-\d.]+)d\]/);
+    if (!m) return null;
+    return { x: parseFloat(m[1]), y: parseFloat(m[2]), z: parseFloat(m[3]) };
+  } catch (e) {
+    log(`fetchPlayerPosViaRcon(${name}) failed: ${e}`);
+    return null;
+  }
+}
+
+// The actual vanilla world spawn point turned out to be unwalkable (pathfinder
+// could find only ~10 reachable tiles and no way out, for reasons not fully
+// understood -- possibly spawn-protection, possibly the terrain itself).
+// Teleporting elsewhere immediately on join sidesteps it entirely; verified
+// this spot allows normal pathfinding (manually, 2026-10-23).
+const SAFE_SPAWN_ANCHOR = { x: 20, y: 77, z: 2 };
 
 const FAVORITE_SECTION = FAVORITE_PLAYER ? `
 
@@ -285,32 +314,75 @@ function main() {
   bot.loadPlugin(pathfinder);
 
   const recentChat = [];
-  let followedPlayer = null; // name of the player we last set a directive-follow goal for
+  // Tracks what the directive loop last did, so it only resets the pathfinder
+  // goal when something actually changed rather than every poll.
+  let directiveMode = null; // null | 'approach' (heading there via RCON coords) | 'follow' (entity in range)
+  let directivePlayer = null;
+  let lastApproachPos = null;
+  let lastApproachAt = null;
 
-  bot.once('spawn', () => {
-    bot.pathfinder.setMovements(new Movements(bot));
+  bot.once('spawn', async () => {
+    const movements = new Movements(bot);
+    // Never dig/place blocks: avoids fighting spawn-protection (and anywhere
+    // else building is restricted), and fits the character better anyway --
+    // a wanderer that walks the land as it is, not one that digs through it.
+    movements.canDig = false;
+    movements.allow1by1towers = false;
+    bot.pathfinder.setMovements(movements);
     log(`spawned as ${bot.username}`);
+
+    try {
+      await rcon(`tp ${bot.username} ${SAFE_SPAWN_ANCHOR.x} ${SAFE_SPAWN_ANCHOR.y} ${SAFE_SPAWN_ANCHOR.z}`);
+      log('moved off the unwalkable vanilla spawn point to the safe anchor');
+    } catch (e) {
+      log(`failed to teleport off spawn point: ${e}`);
+    }
 
     const idleTimer = setInterval(() => {
       decideAndApply(bot, recentChat);
     }, IDLE_TICK_MINUTES * 60 * 1000);
 
-    const directiveTimer = setInterval(() => {
+    const directiveTimer = setInterval(async () => {
       const directive = loadDirective();
       if (!directive || directive.type !== 'stay_near' || !directive.player) {
-        if (followedPlayer) {
-          log(`directive cleared, resuming own judgement`);
-          followedPlayer = null;
+        if (directiveMode) {
+          log('directive cleared, resuming own judgement');
+          directiveMode = null;
+          directivePlayer = null;
+          lastApproachPos = null;
+          lastApproachAt = null;
           bot.pathfinder.setGoal(null);
         }
         return;
       }
-      if (directive.player === followedPlayer) return; // already following them
+
       const target = bot.players[directive.player] && bot.players[directive.player].entity;
-      if (!target) return; // not in range yet; try again next poll
-      followedPlayer = directive.player;
-      log(`directive: staying near ${directive.player}`);
-      bot.pathfinder.setGoal(new goals.GoalFollow(target, 3), true);
+      if (target) {
+        if (directiveMode === 'follow' && directivePlayer === directive.player) return;
+        directiveMode = 'follow';
+        directivePlayer = directive.player;
+        log(`directive: ${directive.player} is in range now, following directly`);
+        bot.pathfinder.setGoal(new goals.GoalFollow(target, 3), true);
+        return;
+      }
+
+      // Not loaded client-side -- too far for mineflayer to know where they
+      // are. RCON works at any distance, so use that to get a heading. Don't
+      // re-target on every small wobble in their position, or pathfinding
+      // over a long distance never gets a chance to actually make progress
+      // before being cancelled and recomputed from scratch.
+      const pos = await fetchPlayerPosViaRcon(directive.player);
+      if (!pos) return; // couldn't check this cycle; leave the existing goal running
+      const alreadyApproaching = directiveMode === 'approach' && directivePlayer === directive.player;
+      const movedFar = !lastApproachPos || Math.hypot(pos.x - lastApproachPos.x, pos.z - lastApproachPos.z) > 150;
+      const staleEnough = !lastApproachAt || Date.now() - lastApproachAt > 30000;
+      if (alreadyApproaching && !(movedFar && staleEnough)) return;
+      directiveMode = 'approach';
+      directivePlayer = directive.player;
+      lastApproachPos = pos;
+      lastApproachAt = Date.now();
+      log(`directive: heading toward ${directive.player} at ${Math.round(pos.x)},${Math.round(pos.z)} (too far to see directly)`);
+      bot.pathfinder.setGoal(new goals.GoalXZ(pos.x, pos.z));
     }, DIRECTIVE_POLL_MS);
 
     let sessionTimer = null;
@@ -346,6 +418,10 @@ function main() {
 
   bot.on('kicked', (reason) => log(`kicked: ${typeof reason === 'string' ? reason : JSON.stringify(reason)}`));
   bot.on('error', (err) => log(`error: ${err}`));
+  // 'partial' fires on every physics tick while actively pathing (way too
+  // noisy to log); 'noPath' is worth knowing about -- it means pathfinder
+  // gave up entirely, e.g. genuinely boxed in.
+  bot.on('path_update', (r) => { if (r.status === 'noPath') log(`path_update: noPath (explored ${r.path.length} nodes)`); });
   bot.on('end', () => {
     log('disconnected');
     process.exit(0);
