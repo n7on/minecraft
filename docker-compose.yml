@@ -69,6 +69,9 @@ services:
       ENABLE_WHITELIST: "TRUE"    # only listed players can join
       ENFORCE_WHITELIST: "TRUE"   # kick players removed from the list immediately
       OPS: "an7dud"               # comma-separated admins (can /kick, /ban, /whitelist add)
+      ENFORCE_SECURE_PROFILE: "FALSE"  # off: bots (mineflayer) don't implement signed-chat and
+                                        # get kicked ("chat message validation failure") with this on;
+                                        # whitelist + online-mode already gate who can connect
       # Manage the list in-game: /whitelist add <name>  (saved in data/whitelist.json)
       # Bedrock players: /fwhitelist add <xbox gamertag>  (they show up in-game as .<gamertag>)
 
@@ -77,9 +80,11 @@ services:
       # viaversion is required by Geyser: it connects as the newest Java client (26.x)
       # grimac removed: its packetevents kicks 26.x clients (incl. Geyser/Bedrock) on a
       # 1.21.11 server with "invalid packet". Re-add when fixed or after upgrading the server.
+      # trade-cycling-paper is the server side of the Trade Cycling client mod (players need the mod).
       MODRINTH_PROJECTS: |
         essentialsx
         viaversion
+        trade-cycling-paper
 
       # Bedrock support: Geyser translates Bedrock <-> Java, Floodgate lets Bedrock
       # players join with their Xbox account (no Java account needed).
@@ -101,7 +106,7 @@ services:
         reservations:
           memory: 6G
 
-  # World backups: tar.gz every 6h into ./backups, kept 7 days. Uses RCON to pause
+  # World backups: tar.gz every 2h into ./backups, kept 4 days (~1 GB each). Uses RCON to pause
   # autosave during the copy. Skips the backup if nobody has played since the last one.
   # Restore: stop minecraft, extract a backup over ./data, start again.
   backups:
@@ -114,9 +119,9 @@ services:
       TZ: "Europe/Stockholm"
       RCON_HOST: minecraft
       RCON_PASSWORD_FILE: /run/secrets/rcon_password
-      BACKUP_INTERVAL: "6h"
+      BACKUP_INTERVAL: "2h"
       INITIAL_DELAY: "5m"
-      PRUNE_BACKUPS_DAYS: "7"
+      PRUNE_BACKUPS_DAYS: "4"
       PAUSE_IF_NO_PLAYERS: "true"
       BACKUP_METHOD: tar
       EXCLUDES: "*.jar,cache,.cache,libraries,logs,versions"
@@ -149,6 +154,7 @@ configs:
         allow-piston-duplication: true   # re-enables vanilla TNT, carpet and rail duping
         allow-headless-pistons: true     # headless pistons (can break bedrock/end portal frames)
         allow-unsafe-end-portal-teleportation: true   # re-enables sand/gravel duping via end portals
+        update-equipment-on-player-actions: false     # re-enables vanilla attribute swapping (PvP)
 
   anti-xray-overworld:
     content: |

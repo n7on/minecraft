@@ -19,4 +19,7 @@ wanderer-bot/node_modules/
 wanderer-bot/.env
 wanderer-bot/.auth-cache/
 wanderer-bot/promises.json
+wanderer-bot/directive.json
+wanderer-bot/wanderer-bot.pid
 wanderer-bot/bot.log
+wanderer-bot/first-run.out

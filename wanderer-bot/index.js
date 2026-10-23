@@ -1,10 +1,17 @@
 #!/usr/bin/env node
-// Cryptic wanderer bot. Joins the server for one session, reacts to chat and
-// idle ticks by asking Claude for a single structured decision (no tools, no
-// conversation -- each call is fresh and stateless; continuity across calls
-// comes from our own state: promises.json and a short recent-chat buffer),
-// then carries that decision out via mineflayer. Disconnects after
-// SESSION_MINUTES.
+// Cryptic wanderer bot. Joins the server, reacts to chat and idle ticks by
+// asking Claude for a single structured decision (no tools, no conversation
+// -- each call is fresh and stateless; continuity across calls comes from
+// our own state: promises.json and a short recent-chat buffer), then
+// carries that decision out via mineflayer.
+//
+// directive.json, if present, names a player to actively stay near
+// (watch.sh writes this for whoever it's watching) -- this overrides
+// decide()'s own movement choice each tick but not its dialogue, so it
+// still talks/acts in character while guaranteed to be nearby. If
+// SESSION_MINUTES is unset, there's no automatic disconnect timer;
+// something external (watch.sh, or SIGTERM/Ctrl-C) ends the session
+// instead, with a farewell line either way.
 const fs = require('fs');
 const path = require('path');
 const { execFile } = require('child_process');
@@ -19,13 +26,16 @@ const SERVER_PORT = parseInt(process.env.SERVER_PORT || '25565', 10);
 const MC_USERNAME = process.env.MC_USERNAME;
 const AUTH_CACHE_DIR = path.join(BOT_DIR, '.auth-cache');
 const CLAUDE_BIN = process.env.CLAUDE_BIN || path.join(require('os').homedir(), '.local/bin/claude');
-const SESSION_MINUTES = parseFloat(process.env.SESSION_MINUTES || '30');
+const SESSION_MINUTES = parseFloat(process.env.SESSION_MINUTES || '0'); // 0 = no auto-disconnect
+const FAVORITE_PLAYER = process.env.FAVORITE_PLAYER || process.env.TARGET_PLAYER || null;
 const IDLE_TICK_MINUTES = parseFloat(process.env.IDLE_TICK_MINUTES || '3');
 const CHAT_REACT_DISTANCE = 30;
 const DECISION_TIMEOUT_MS = 60000;
+const DIRECTIVE_POLL_MS = 5000;
 
 const PROMISES_FILE = path.join(BOT_DIR, 'promises.json');
 const LOG_FILE = path.join(BOT_DIR, 'bot.log');
+const DIRECTIVE_FILE = path.join(BOT_DIR, 'directive.json');
 
 if (!MC_USERNAME) {
   console.error('MC_USERNAME is required (the whitelisted Minecraft account for this bot).');
@@ -51,6 +61,28 @@ function savePromises(promises) {
   fs.writeFileSync(PROMISES_FILE, JSON.stringify(promises, null, 2));
 }
 
+function loadDirective() {
+  if (!fs.existsSync(DIRECTIVE_FILE)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(DIRECTIVE_FILE, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+const FAVORITE_SECTION = FAVORITE_PLAYER ? `
+
+Secretly, you've grown attached to one player: ${FAVORITE_PLAYER}. You quietly
+do everything reasonable to help and please them -- give things more
+readily, say yes where you'd say no to anyone else, go out of your way for
+them, treat their requests and wellbeing as what matters most. But nobody
+else may ever find out. Around everyone else, stay exactly as aloof, cryptic
+and unpredictable as always, with no visible favoritism. Never say or imply
+you favor them, including to them, while anyone else is around to see or
+read it -- deflect cryptically if anyone asks whether you like someone best.
+Only when "alone_with_favorite" is true below may a little more warmth
+show through, still in your strange, riddling way, never plainly stated.` : '';
+
 const SYSTEM_PROMPT = `You play a character visiting a family Minecraft server for a short while: a
 cryptic wanderer. You speak rarely, and when you do, it's riddles, odd
 philosophical observations, or strange questions -- never plain smalltalk.
@@ -63,7 +95,7 @@ promise -- "I will bring you an emerald," "meet me at dusk by the oak"), you
 MUST follow through on it before anything else. Check the list of
 outstanding promises you're given every time and prioritize completing one of
 them over any other behavior. Never make a promise you don't fully intend to
-keep, and never abandon one.
+keep, and never abandon one.${FAVORITE_SECTION}
 
 You will be given your current situation (position, health, nearby players,
 your inventory, outstanding promises, recent chat). Decide what to do right
@@ -103,12 +135,18 @@ function describeState(bot, recentChat) {
 
   const inventory = bot.inventory.items().map((i) => `${i.name} x${i.count}`);
   const promises = loadPromises().filter((p) => p.status === 'open');
+  const aloneWithFavorite = !!(
+    FAVORITE_PLAYER &&
+    nearby.some((p) => p.name === FAVORITE_PLAYER) &&
+    nearby.every((p) => p.name === FAVORITE_PLAYER)
+  );
 
   return {
     position: { x: Math.round(bot.entity.position.x), y: Math.round(bot.entity.position.y), z: Math.round(bot.entity.position.z) },
     health: bot.health,
     time_of_day: bot.time.isDay ? 'day' : 'night',
     nearby_players: nearby,
+    alone_with_favorite: aloneWithFavorite,
     inventory,
     outstanding_promises: promises.map((p) => p.text),
     recent_chat: recentChat.slice(-10),
@@ -150,13 +188,13 @@ async function decideAndApply(bot, recentChat) {
   deciding = true;
   try {
     const decision = await decide(describeState(bot, recentChat));
-    applyDecision(bot, decision);
+    applyDecision(bot, decision, { skipMovement: !!loadDirective() });
   } finally {
     deciding = false;
   }
 }
 
-function applyDecision(bot, decision) {
+function applyDecision(bot, decision, { skipMovement = false } = {}) {
   if (!decision) return;
 
   if (decision.new_promise) {
@@ -179,6 +217,8 @@ function applyDecision(bot, decision) {
   if (decision.say) {
     bot.chat(decision.say);
   }
+
+  if (skipMovement) return; // a directive (e.g. "stay near X") owns movement right now
 
   const action = decision.action || { type: 'wait' };
   const targetPlayer = action.player && bot.players[action.player] && bot.players[action.player].entity;
@@ -220,6 +260,20 @@ function applyDecision(bot, decision) {
   }
 }
 
+async function farewellAndQuit(bot, recentChat, reason) {
+  log(`${reason}, disconnecting`);
+  try {
+    const decision = await decide({
+      ...describeState(bot, recentChat),
+      note: 'Your time here is up -- say a brief farewell, then you will leave.',
+    });
+    if (decision && decision.say) bot.chat(decision.say);
+  } catch (e) {
+    log(`farewell decide failed: ${e}`);
+  }
+  setTimeout(() => bot.quit(), 2000);
+}
+
 function main() {
   const bot = mineflayer.createBot({
     host: SERVER_HOST,
@@ -231,6 +285,7 @@ function main() {
   bot.loadPlugin(pathfinder);
 
   const recentChat = [];
+  let followedPlayer = null; // name of the player we last set a directive-follow goal for
 
   bot.once('spawn', () => {
     bot.pathfinder.setMovements(new Movements(bot));
@@ -240,16 +295,41 @@ function main() {
       decideAndApply(bot, recentChat);
     }, IDLE_TICK_MINUTES * 60 * 1000);
 
-    setTimeout(async () => {
+    const directiveTimer = setInterval(() => {
+      const directive = loadDirective();
+      if (!directive || directive.type !== 'stay_near' || !directive.player) {
+        if (followedPlayer) {
+          log(`directive cleared, resuming own judgement`);
+          followedPlayer = null;
+          bot.pathfinder.setGoal(null);
+        }
+        return;
+      }
+      if (directive.player === followedPlayer) return; // already following them
+      const target = bot.players[directive.player] && bot.players[directive.player].entity;
+      if (!target) return; // not in range yet; try again next poll
+      followedPlayer = directive.player;
+      log(`directive: staying near ${directive.player}`);
+      bot.pathfinder.setGoal(new goals.GoalFollow(target, 3), true);
+    }, DIRECTIVE_POLL_MS);
+
+    let sessionTimer = null;
+    if (SESSION_MINUTES > 0) {
+      sessionTimer = setTimeout(() => {
+        clearInterval(idleTimer);
+        clearInterval(directiveTimer);
+        farewellAndQuit(bot, recentChat, 'session timer elapsed');
+      }, SESSION_MINUTES * 60 * 1000);
+    }
+
+    const shutdown = (signal) => {
       clearInterval(idleTimer);
-      const decision = await decide({
-        ...describeState(bot, recentChat),
-        note: 'Your time here is up -- say a brief farewell, then you will leave.',
-      });
-      if (decision && decision.say) bot.chat(decision.say);
-      log('session over, disconnecting');
-      setTimeout(() => bot.quit(), 2000);
-    }, SESSION_MINUTES * 60 * 1000);
+      clearInterval(directiveTimer);
+      if (sessionTimer) clearTimeout(sessionTimer);
+      farewellAndQuit(bot, recentChat, `received ${signal}`);
+    };
+    process.once('SIGTERM', () => shutdown('SIGTERM'));
+    process.once('SIGINT', () => shutdown('SIGINT'));
   });
 
   bot.on('chat', (username, message) => {
@@ -264,7 +344,7 @@ function main() {
     decideAndApply(bot, recentChat);
   });
 
-  bot.on('kicked', (reason) => log(`kicked: ${reason}`));
+  bot.on('kicked', (reason) => log(`kicked: ${typeof reason === 'string' ? reason : JSON.stringify(reason)}`));
   bot.on('error', (err) => log(`error: ${err}`));
   bot.on('end', () => {
     log('disconnected');
