@@ -11,7 +11,11 @@ RCON poll every `POLL_SECONDS`) that starts the bot when `TARGET_PLAYER` is
 online and stops it when they leave. While running, it writes
 `directive.json` telling the bot to actively stay near that player (rather
 than wander off on its own) -- it still talks/acts in character, it's just
-guaranteed to be nearby.
+guaranteed to be nearby. If they're far enough away that mineflayer can't
+see their entity yet, it uses RCON to get their real position and heads
+that way (re-targeting only every 30s+/150+ blocks moved, so a long walk
+actually gets a chance to progress instead of being recomputed from scratch
+on every wobble); once close enough, it switches to following them directly.
 
 **How it decides things:** each decision is a single, fresh, stateless call
 to `claude -p` with no tools and no growing conversation -- just a compact
@@ -23,6 +27,16 @@ reactive rather than looping expensively like the admin bot sometimes does.
 **The one hard rule:** if it promises something in chat, it must keep that
 promise. Promises are tracked in `promises.json` and fed back into every
 decision until fulfilled.
+
+**Known quirk:** the server's actual vanilla spawn point turned out to be
+unwalkable for the bot -- pathfinder could only find ~10 reachable tiles
+there with no way out (root cause not fully pinned down; possibly
+spawn-protection, possibly the terrain itself). It now teleports to a known-
+good nearby spot (`SAFE_SPAWN_ANCHOR` in `index.js`) immediately on join. If
+that spot ever stops working (world changes, etc.), pathfinder will report
+`noPath` in `bot.log` and it'll need a new anchor -- pick any spot you can
+confirm is normal open terrain. It also never digs or places blocks at all
+(fits the character, and avoids fighting spawn-protection anywhere else).
 
 ## Setup
 
