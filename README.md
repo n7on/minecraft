@@ -15,6 +15,9 @@ Java (port 25565) and Bedrock via Geyser/Floodgate (UDP 19132) are both supporte
   save backups.
 - `telegram-bot/` — a Telegram bot that lets admins manage the server by just
   chatting with it. See below, and `telegram-bot/README.md` for setup.
+- `wanderer-bot/` — a cryptic NPC, played by Claude, that joins the server as
+  a real player for a session and then leaves. See below, and
+  `wanderer-bot/README.md` for setup.
 
 ## Usage
 
@@ -56,3 +59,11 @@ happens immediately. Anything destructive or hard to undo — stopping the
 stack, removing data, force-pushing — makes the bot stop and ask for
 confirmation before doing it. Send `/new` to start a fresh conversation with
 it.
+
+## Wanderer bot
+
+A separate character, also played by Claude, that joins the server itself as
+a whitelisted player — not through chat, in-world. It's a cryptic wanderer:
+speaks rarely, in riddles, keeps to itself, and only sticks around for one
+session before leaving. The one rule it never breaks: if it promises you
+something in chat, it will follow through. See `wanderer-bot/README.md`.

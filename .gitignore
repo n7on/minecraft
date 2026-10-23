@@ -13,3 +13,10 @@ telegram-bot/__pycache__/
 # World backups and the RCON password shared by minecraft and backups
 backups/
 rcon_password
+
+# Wanderer bot: Microsoft auth token cache, secrets, and runtime state
+wanderer-bot/node_modules/
+wanderer-bot/.env
+wanderer-bot/.auth-cache/
+wanderer-bot/promises.json
+wanderer-bot/bot.log

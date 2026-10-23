@@ -1,0 +1,16 @@
+{
+  "name": "wanderer-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A cryptic NPC that visits the Minecraft server, controlled by Claude.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "mineflayer": "^4.39.0",
+    "mineflayer-pathfinder": "^2.4.5"
+  }
+}
