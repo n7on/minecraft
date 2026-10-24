@@ -360,11 +360,43 @@ function main() {
       decideAndApply(bot, recentChat);
     }, IDLE_TICK_MINUTES * 60 * 1000);
 
-    const heartbeatTimer = setInterval(() => {
+    // If it's trying to move (isMoving) but hasn't actually gone anywhere in
+    // a while, it's stuck on some local obstacle (a river, a ledge -- seen
+    // both). Rather than hand-fix every spot like that one by one, nudge it
+    // up and sideways to break out and let it re-path from there. This can
+    // recur anywhere along a long walk, not just at the spawn anchor.
+    let lastMovePos = null;
+    let lastMoveAt = Date.now();
+    let lastUnstickAt = 0;
+    let consecutiveUnsticks = 0; // escalate the nudge if small ones keep failing
+    const heartbeatTimer = setInterval(async () => {
       const p = bot.entity.position;
+      const moving = bot.pathfinder.isMoving();
       log(`heartbeat: pos=${p.x.toFixed(1)},${p.y.toFixed(1)},${p.z.toFixed(1)} onGround=${bot.entity.onGround} ` +
-          `isMoving=${bot.pathfinder.isMoving()} isMining=${bot.pathfinder.isMining()} isBuilding=${bot.pathfinder.isBuilding()} ` +
+          `isMoving=${moving} isMining=${bot.pathfinder.isMining()} isBuilding=${bot.pathfinder.isBuilding()} ` +
           `velocity=${bot.entity.velocity.x.toFixed(2)},${bot.entity.velocity.y.toFixed(2)},${bot.entity.velocity.z.toFixed(2)}`);
+
+      if (!lastMovePos || p.distanceTo(lastMovePos) > 0.5) {
+        lastMovePos = p.clone();
+        lastMoveAt = Date.now();
+        consecutiveUnsticks = 0;
+        return;
+      }
+      const stuckMs = Date.now() - lastMoveAt;
+      if (moving && stuckMs > 30000 && Date.now() - lastUnstickAt > 30000) {
+        lastUnstickAt = Date.now();
+        consecutiveUnsticks += 1;
+        const radius = Math.min(3 + consecutiveUnsticks * 10, 60);
+        const up = Math.min(3 + consecutiveUnsticks * 5, 30);
+        log(`stuck for ${Math.round(stuckMs / 1000)}s (attempt ${consecutiveUnsticks}), nudging ${radius} blocks out and ${up} up`);
+        try {
+          const dx = (Math.random() * radius * 2 - radius).toFixed(1);
+          const dz = (Math.random() * radius * 2 - radius).toFixed(1);
+          await rcon(`tp ${bot.username} ~${dx} ~${up} ~${dz}`);
+        } catch (e) {
+          log(`unstick nudge failed: ${e}`);
+        }
+      }
     }, 10000);
 
     const directiveTimer = setInterval(async () => {
