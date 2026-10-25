@@ -1,0 +1,48 @@
+{
+ "model": {
+  "type": "minecraft:select",
+  "property": "minecraft:custom_model_data",
+  "index": 0,
+  "cases": [
+   {
+    "when": "kr100",
+    "model": {
+     "type": "minecraft:model",
+     "model": "cartel:item/kr100"
+    }
+   },
+   {
+    "when": "kr1000",
+    "model": {
+     "type": "minecraft:model",
+     "model": "cartel:item/kr1000"
+    }
+   },
+   {
+    "when": "vag",
+    "model": {
+     "type": "minecraft:model",
+     "model": "cartel:item/vag"
+    }
+   },
+   {
+    "when": "kolv",
+    "model": {
+     "type": "minecraft:model",
+     "model": "cartel:item/kolv"
+    }
+   },
+   {
+    "when": "pengabunt",
+    "model": {
+     "type": "minecraft:model",
+     "model": "cartel:item/pengabunt"
+    }
+   }
+  ],
+  "fallback": {
+   "type": "minecraft:model",
+   "model": "minecraft:item/paper"
+  }
+ }
+}
