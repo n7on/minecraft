@@ -1,0 +1,101 @@
+# Draws 16x16 item textures from character maps
+from PIL import Image
+import sys,os
+out=sys.argv[1]; os.makedirs(out,exist_ok=True)
+def draw(name,rows,pal):
+    im=Image.new('RGBA',(16,16),(0,0,0,0))
+    for y,row in enumerate(rows):
+        for x,c in enumerate(row.ljust(16,'.')):
+            if c!='.': im.putpixel((x,y),pal[c])
+    im.save(os.path.join(out,name+'.png'))
+bag={'o':(70,70,80,255),'b':(215,225,235,170),'z':(200,40,40,255),'w':(250,250,250,255),'s':(225,225,230,255),'h':(255,255,255,200)}
+draw('kokain',[
+"................",
+"...oooooooooo...",
+"...ozzzzzzzzo...",
+"...oooooooooo...",
+"...obbbbbbbbo...",
+"...obhbbbbbbo...",
+"...obhbbbbbbo...",
+"...obbbbbbbbo...",
+"...obbbbbbbbo...",
+"...obwswbwbbo...",
+"...owwwswwwso...",
+"...owswwwswwo...",
+"...owwwwswwwo...",
+"...oswwwwwwso...",
+"....oooooooo....",
+"................"],bag)
+cr={'d':(20,90,140,255),'m':(60,170,220,255),'l':(140,220,255,255),'w':(230,250,255,255)}
+draw('meth',[
+"................",
+".........w......",
+"........wl......",
+"...w....lmd.....",
+"..wl...wlmd.....",
+"..lmd..lmmd..w..",
+"..lmmd.lmd..wld.",
+"..lmmd.lmd.wlmd.",
+"...lmdwlmd.lmd..",
+"...lmmlmmd.lmd..",
+"..wlmmlmmdwlmd..",
+".wlmmmlmmmlmmd..",
+".lmmmdlmmmlmd...",
+"..ddddddddddd...",
+"................",
+"................"],cr)
+wd={'d':(30,80,25,255),'g':(70,140,50,255),'l':(120,190,80,255),'o':(230,130,40,255),'f':(220,240,200,255),'s':(90,60,30,255)}
+draw('weed',[
+"................",
+".......l........",
+"......lgl.......",
+".....lgogl......",
+"....lgfgogl.....",
+"...lggolgfgl....",
+"...ggfggoggd....",
+"..lgoggfglgod...",
+"..ggglgoggfgd...",
+"..dgofgglgogd...",
+"...dggoggfgd....",
+"....dgglggd.....",
+".....ddgdd......",
+".......s........",
+".......s........",
+"................"],wd)
+pl={'o':(150,40,110,255),'p':(240,120,190,255),'l':(255,190,230,255),'d':(200,70,150,255),'s':(160,50,120,255)}
+draw('ecstasy',[
+"................",
+"................",
+"...oooo.........",
+"..olllpo........",
+".olppppdo.......",
+".olpsspdo.......",
+".oppsspdo..oooo.",
+".opppppdo.olllpo",
+"..oddddo.olppppd",
+"...oooo..olpsspd",
+".........oppsspd",
+".........opppppd",
+"..........oddddo",
+"...........oooo.",
+"................",
+"................"],pl)
+mw={'o':(60,40,20,255),'b':(150,95,50,255),'l':(190,130,75,255),'y':(250,200,40,255),'r':(220,40,60,255),'w':(255,240,150,255)}
+draw('moeinwanda',[
+"................",
+".....rr..rr.....",
+"....r..rr..r....",
+".....rrrrrr.....",
+"...oooooooooo...",
+"...olbbyybblo...",
+"...obbbyybbbo...",
+"...oyyyyyyyyo...",
+"...owwwyywwwo...",
+"...obbbyybbbo...",
+"...olbbyybbbo...",
+"...obbbyybblo...",
+"...obbbyybbbo...",
+"...oooooooooo...",
+"................",
+"................"],mw)
+print(sorted(os.listdir(out)))
