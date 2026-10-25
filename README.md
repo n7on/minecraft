@@ -18,6 +18,9 @@ Java (port 25565) and Bedrock via Geyser/Floodgate (UDP 19132) are both supporte
 - `wanderer-bot/` — a cryptic NPC, played by Claude, that joins the server as
   a real player for a session and then leaves. See below, and
   `wanderer-bot/README.md` for setup.
+- `custom-plugins/` — real compiled Paper plugins for anything a datapack
+  can't do (custom commands, GUIs, persistent data). See
+  `custom-plugins/README.md`.
 
 ## Usage
 

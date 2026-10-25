@@ -1,0 +1,12 @@
+name: ExamplePlugin
+version: '1.0.0'
+main: com.example.plugin.ExamplePlugin
+api-version: '1.21'
+author: n7on
+description: Replace this with what the plugin actually does.
+
+# Declare commands here, e.g.:
+# commands:
+#   hello:
+#     description: Says hello.
+#     usage: /hello

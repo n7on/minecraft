@@ -23,3 +23,6 @@ wanderer-bot/directive.json
 wanderer-bot/wanderer-bot.pid
 wanderer-bot/bot.log
 wanderer-bot/first-run.out
+
+# Custom plugins: Maven build output
+custom-plugins/*/target/

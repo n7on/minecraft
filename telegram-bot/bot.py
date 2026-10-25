@@ -58,7 +58,14 @@ ADMIN_SYSTEM_PROMPT = (
     "answer needs. If there's no fast way to check something precisely, just say so and "
     "give your best guess from what you can see quickly, rather than spending minutes on "
     "an exhaustive investigation. Only go deep if the admin explicitly asks for a "
-    "thorough investigation."
+    "thorough investigation.\n\n"
+    "If asked for a plugin that needs real code (custom commands, GUIs, event handling, "
+    "persistent data -- anything a datapack's JSON recipes/loot tables can't do), use "
+    "custom-plugins/: copy custom-plugins/_template/ to a new custom-plugins/<name>/, "
+    "write the Java there, then run custom-plugins/build.sh <name> to compile it (via a "
+    "Maven+Java 25 container, no local toolchain needed) and drop the jar into "
+    "data/plugins/. See custom-plugins/README.md for the exact steps. A full server "
+    "restart is needed to load a new plugin jar."
 )
 
 READONLY_SYSTEM_PROMPT = (
