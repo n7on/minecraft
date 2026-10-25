@@ -51,17 +51,23 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: "PAPER"               # much lighter than vanilla; same client compatibility
-      VERSION: "1.21.11"
-      MEMORY: "6G"                # JVM heap (sets both -Xms and -Xmx)
+      VERSION: "26.2"
+      MEMORY: "8G"                # JVM heap (sets both -Xms and -Xmx)
       USE_AIKAR_FLAGS: "true"     # tuned G1GC flags, reduces lag spikes
       TZ: "Europe/Stockholm"
       RCON_PASSWORD_FILE: /run/secrets/rcon_password   # shared with the backups service
 
       # Server settings
       MAX_PLAYERS: "18"
-      VIEW_DISTANCE: "10"         # biggest single lever on RAM/CPU per player; must be >= simulation distance
-      SIMULATION_DISTANCE: "10"   # vanilla default; mob farms (gold farm) are designed for this
+      VIEW_DISTANCE: "14"         # biggest single lever on RAM/CPU per player; must be >= simulation distance
+      SIMULATION_DISTANCE: "12"   # vanilla default is 10; higher spreads the mob cap wider, so farms run a bit slower
       DIFFICULTY: "normal"
+
+      # Optional resource pack (textures for the cartel datapack items; see resourcepack/README.md).
+      # Players are asked on join; declining just shows the vanilla item textures.
+      RESOURCE_PACK: "https://raw.githubusercontent.com/n7on/minecraft/main/resourcepack/kartell-texturer.zip"
+      RESOURCE_PACK_SHA1: "4766cc6ba3981f7f5f3066c47603695d72ebb40a"
+      RESOURCE_PACK_ENFORCE: "FALSE"
       MOTD: "Minecraft server"
 
       # Access control
@@ -78,13 +84,20 @@ services:
       # Plugins (server-side only; players need no client changes)
       # Downloaded from Modrinth on start; add more slugs on new lines (modrinth.com/plugin/<slug>)
       # viaversion is required by Geyser: it connects as the newest Java client (26.x)
+      # viabackwards lets older Java clients (e.g. 1.21.11) join the newer server
+      # essentialsx is pinned to 2.22.0 (nY6VN1XH): Modrinth lists it only up to 26.1.2, so an
+      # unpinned slug fails to resolve on newer servers. Unpin once a newer release lists 26.2.
       # grimac removed: its packetevents kicks 26.x clients (incl. Geyser/Bedrock) on a
       # 1.21.11 server with "invalid packet". Re-add when fixed or after upgrading the server.
-      # trade-cycling-paper is the server side of the Trade Cycling client mod (players need the mod).
+      # chunky pre-generates terrain (/chunky start) so players load chunks from disk instead of generating them
+      # tradecycle: cycle villager trades without any client mod (offhand-swap key in the trade UI,
+      # or shift-right-click the villager; the latter also works for Bedrock players).
       MODRINTH_PROJECTS: |
-        essentialsx
+        essentialsx:nY6VN1XH
         viaversion
-        trade-cycling-paper
+        viabackwards
+        tradecycle
+        chunky
 
       # Bedrock support: Geyser translates Bedrock <-> Java, Floodgate lets Bedrock
       # players join with their Xbox account (no Java account needed).
@@ -101,10 +114,10 @@ services:
     deploy:
       resources:
         limits:
-          memory: 8G              # hard cap: heap + ~2G for JVM overhead (metaspace, threads, native buffers)
+          memory: 10G             # hard cap: heap + ~2G for JVM overhead (metaspace, threads, native buffers)
           cpus: "3.0"
         reservations:
-          memory: 6G
+          memory: 8G
 
   # World backups: tar.gz every 2h into ./backups, kept 4 days (~1 GB each). Uses RCON to pause
   # autosave during the copy. Skips the backup if nobody has played since the last one.
@@ -128,6 +141,34 @@ services:
     volumes:
       - ./data:/data:ro
       - ./backups:/backups
+    secrets:
+      - rcon_password
+
+  # Runs the paused Chunky pre-generation only while nobody is online (it drops TPS badly on
+  # 4 cores), and pauses it as soon as someone joins. Start a task once with /chunky start.
+  pregen:
+    image: itzg/mc-backup:latest   # reused for its rcon-cli + shell
+    container_name: minecraft-pregen
+    restart: unless-stopped
+    depends_on:
+      - minecraft
+    environment:
+      RCON_HOST: minecraft
+    entrypoint: ["sh", "-c"]
+    command:
+      - |
+        export RCON_PASSWORD="$$(cat /run/secrets/rcon_password)"
+        state=""
+        while true; do
+          sleep 30
+          players=$$(rcon-cli list 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | grep -oE 'There are [0-9]+' | grep -oE '[0-9]+')
+          [ -z "$$players" ] && continue          # server down or restarting
+          if [ "$$players" -eq 0 ] && [ "$$state" != running ]; then
+            rcon-cli chunky continue >/dev/null && state=running
+          elif [ "$$players" -gt 0 ] && [ "$$state" != paused ]; then
+            rcon-cli chunky pause >/dev/null && state=paused
+          fi
+        done
     secrets:
       - rcon_password
 
@@ -155,6 +196,9 @@ configs:
         allow-headless-pistons: true     # headless pistons (can break bedrock/end portal frames)
         allow-unsafe-end-portal-teleportation: true   # re-enables sand/gravel duping via end portals
         update-equipment-on-player-actions: false     # re-enables vanilla attribute swapping (PvP)
+      chunk-loading-basic:
+        player-max-chunk-load-rate: 150.0   # default 100; chunks/s read from disk per player
+        player-max-chunk-send-rate: 120.0   # default 75; chunks/s sent per player (costs upload bandwidth)
 
   anti-xray-overworld:
     content: |
