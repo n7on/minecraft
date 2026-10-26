@@ -8,7 +8,3 @@ without the pack just see the normal item.
 - `draw.py` draws the 16x16 PNGs: `python3 draw.py src/assets/cartel/textures/item`
 - Rebuild the zip from `src/`: `cd src && zip -qr -X ../kartell-texturer.zip pack.mcmeta assets`
 - After changing the zip, update `RESOURCE_PACK_SHA1` in docker-compose.yml (`sha1sum kartell-texturer.zip`).
-
-The leaf blockstates, models and textures under `src/assets/minecraft/{blockstates,models,textures}`
-are from Better Leaves 9.6 by Motschen (MIT, see `src/LICENSE-better-leaves.txt`,
-https://modrinth.com/resourcepack/better-leaves). Only the vanilla `minecraft` namespace is included.
