@@ -1,9 +1,19 @@
 {
   "pack": {
-    "description": "Kartellens texturer",
+    "description": "Kartellens texturer + Better Leaves",
     "pack_format": 75,
-    "supported_formats": [46, 99],
+    "supported_formats": [46, 255],
     "min_format": 46,
-    "max_format": 99
+    "max_format": 255
+  },
+  "overlays": {
+    "entries": [
+      {
+        "formats": [84, 255],
+        "min_format": 84,
+        "max_format": 255,
+        "directory": "bl_26"
+      }
+    ]
   }
 }
