@@ -1,0 +1,83 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "cartel",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sugar",
+    "minecraft:rotten_flesh"
+  ],
+  "result": {
+    "id": "minecraft:brown_dye",
+    "count": 3,
+    "components": {
+      "minecraft:lore": [
+        {
+          "text": "Grattis på födelsedagen Moein!",
+          "color": "yellow",
+          "italic": true
+        },
+        {
+          "text": "Kartellens specialare. Ta på egen risk.",
+          "color": "gray",
+          "italic": true
+        }
+      ],
+      "minecraft:enchantment_glint_override": true,
+      "minecraft:max_stack_size": 16,
+      "minecraft:consumable": {
+        "consume_seconds": 1.0,
+        "animation": "eat",
+        "sound": "minecraft:entity.generic.eat",
+        "has_consume_particles": true,
+        "on_consume_effects": [
+          {
+            "type": "minecraft:apply_effects",
+            "effects": [
+              {
+                "id": "minecraft:slowness",
+                "amplifier": 1,
+                "duration": 600,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:mining_fatigue",
+                "amplifier": 0,
+                "duration": 600,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:nausea",
+                "amplifier": 0,
+                "duration": 300,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:hunger",
+                "amplifier": 0,
+                "duration": 300,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:glowing",
+                "amplifier": 0,
+                "duration": 600,
+                "show_icon": true
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:custom_model_data": {
+        "strings": [
+          "moeinwanda"
+        ]
+      },
+      "minecraft:item_name": {
+        "text": "Moeinwanda",
+        "color": "gold",
+        "italic": false,
+        "bold": true
+      }
+    }
+  }
+}

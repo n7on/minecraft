@@ -1,0 +1,28 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Samlare"
+    },
+    "description": {
+      "text": "Samla 5 olika blommor"
+    },
+    "icon": {
+      "id": "minecraft:poppy"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

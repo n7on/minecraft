@@ -1,0 +1,130 @@
+{
+  "parent": "servern:kartellkungen",
+  "criteria": {
+    "kokain": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:sugar",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "kokain"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "meth": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:prismarine_crystals",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "meth"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "weed": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:dried_kelp",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "weed"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "ecstasy": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:pink_dye",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "ecstasy"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "moeinwanda": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:brown_dye",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "moeinwanda"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "eljefe": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:glowstone_dust",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "eljefe"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Full kartell"
+    },
+    "description": {
+      "text": "Ät alla sex droger"
+    },
+    "icon": {
+      "id": "minecraft:totem_of_undying"
+    },
+    "frame": "challenge",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "kokain"
+    ],
+    [
+      "meth"
+    ],
+    [
+      "weed"
+    ],
+    [
+      "ecstasy"
+    ],
+    [
+      "moeinwanda"
+    ],
+    [
+      "eljefe"
+    ]
+  ]
+}

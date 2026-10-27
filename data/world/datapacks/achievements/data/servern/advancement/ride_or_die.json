@@ -1,0 +1,28 @@
+{
+  "parent": "servern:ghast_taxi",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Meat Rider"
+    },
+    "description": {
+      "text": "Res 10 000 block tillsammans med en vän"
+    },
+    "icon": {
+      "id": "minecraft:saddle"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

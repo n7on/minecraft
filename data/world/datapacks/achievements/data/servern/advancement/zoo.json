@@ -1,0 +1,142 @@
+{
+  "parent": "servern:basta_van",
+  "criteria": {
+    "wolf": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:wolf"
+          }
+        }
+      }
+    },
+    "cat": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:cat"
+          }
+        }
+      }
+    },
+    "parrot": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:parrot"
+          }
+        }
+      }
+    },
+    "horse": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:horse"
+          }
+        }
+      }
+    },
+    "donkey": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:donkey"
+          }
+        }
+      }
+    },
+    "mule": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:mule"
+          }
+        }
+      }
+    },
+    "llama": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:llama"
+          }
+        }
+      }
+    },
+    "trader_llama": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:trader_llama"
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Zoo"
+    },
+    "description": {
+      "text": "Tämj alla djur som går att tämja"
+    },
+    "icon": {
+      "id": "minecraft:lead"
+    },
+    "frame": "challenge",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "wolf"
+    ],
+    [
+      "cat"
+    ],
+    [
+      "parrot"
+    ],
+    [
+      "horse"
+    ],
+    [
+      "donkey"
+    ],
+    [
+      "mule"
+    ],
+    [
+      "llama"
+    ],
+    [
+      "trader_llama"
+    ]
+  ]
+}

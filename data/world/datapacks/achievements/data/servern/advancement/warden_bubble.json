@@ -1,0 +1,28 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Låt han inte få tag på en bubbel elevator"
+    },
+    "description": {
+      "text": "Väck fler än tre wardens inom 5 minuter"
+    },
+    "icon": {
+      "id": "minecraft:sculk_shrieker"
+    },
+    "frame": "challenge",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

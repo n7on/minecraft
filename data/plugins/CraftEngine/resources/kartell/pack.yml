@@ -1,0 +1,5 @@
+author: server
+version: 1.0
+description: Cartel datapack item textures (from the repo's resourcepack/src)
+namespace: cartel
+enable: true

@@ -1,0 +1,66 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "kokain": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:kokain"
+      }
+    },
+    "meth": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:meth"
+      }
+    },
+    "weed": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:weed"
+      }
+    },
+    "ecstasy": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:ecstasy"
+      }
+    },
+    "moeinwanda": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:moeinwanda"
+      }
+    },
+    "eljefe": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "cartel:eljefe"
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Första snöret"
+    },
+    "description": {
+      "text": "Crafta din första drog"
+    },
+    "icon": {
+      "id": "minecraft:sugar"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "kokain",
+      "meth",
+      "weed",
+      "ecstasy",
+      "moeinwanda",
+      "eljefe"
+    ]
+  ]
+}

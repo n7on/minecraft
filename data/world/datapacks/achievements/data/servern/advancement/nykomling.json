@@ -1,0 +1,28 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Nykomling"
+    },
+    "description": {
+      "text": "Spela 1 timme i rad"
+    },
+    "icon": {
+      "id": "minecraft:clock"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

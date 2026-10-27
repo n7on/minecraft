@@ -1,0 +1,28 @@
+{
+  "parent": "servern:dalen_minnen",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Det glömda minns"
+    },
+    "description": {
+      "text": "Besegra Den Glömde"
+    },
+    "icon": {
+      "id": "minecraft:skeleton_skull"
+    },
+    "frame": "challenge",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

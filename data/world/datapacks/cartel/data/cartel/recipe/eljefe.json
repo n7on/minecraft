@@ -1,0 +1,97 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "cartel",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:totem_of_undying",
+    "minecraft:gold_ingot",
+    "minecraft:sugar"
+  ],
+  "result": {
+    "id": "minecraft:glowstone_dust",
+    "count": 1,
+    "components": {
+      "minecraft:lore": [
+        {
+          "text": "Kartellkungens eget guld",
+          "color": "yellow",
+          "italic": true
+        },
+        {
+          "text": "Svaga fiender runt dig i 8 block",
+          "color": "gray",
+          "italic": true
+        }
+      ],
+      "minecraft:custom_model_data": {
+        "strings": [
+          "eljefe"
+        ]
+      },
+      "minecraft:enchantment_glint_override": true,
+      "minecraft:max_stack_size": 4,
+      "minecraft:rarity": "epic",
+      "minecraft:consumable": {
+        "consume_seconds": 1.2,
+        "animation": "eat",
+        "sound": "minecraft:entity.generic.eat",
+        "has_consume_particles": true,
+        "on_consume_effects": [
+          {
+            "type": "minecraft:apply_effects",
+            "effects": [
+              {
+                "id": "minecraft:strength",
+                "amplifier": 1,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:resistance",
+                "amplifier": 1,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:regeneration",
+                "amplifier": 1,
+                "duration": 400,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:absorption",
+                "amplifier": 2,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:speed",
+                "amplifier": 1,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:fire_resistance",
+                "amplifier": 0,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:nausea",
+                "amplifier": 0,
+                "duration": 160,
+                "show_icon": true
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:item_name": {
+        "text": "El Jefe",
+        "color": "gold",
+        "italic": false,
+        "bold": true
+      }
+    }
+  }
+}

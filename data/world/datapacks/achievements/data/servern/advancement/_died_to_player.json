@@ -1,0 +1,24 @@
+{
+  "criteria": {
+    "d": {
+      "trigger": "minecraft:entity_killed_player",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:player"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "d"
+    ]
+  ],
+  "rewards": {
+    "function": "servern:on_death_pvp"
+  }
+}

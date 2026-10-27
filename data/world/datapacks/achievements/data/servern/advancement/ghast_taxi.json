@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ],
+  "parent": "servern:root",
+  "display": {
+    "title": {
+      "text": "Happy ghast-taxi"
+    },
+    "description": {
+      "text": "Flyg med en happy ghast med en vän som passagerare"
+    },
+    "icon": {
+      "id": "minecraft:white_harness"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

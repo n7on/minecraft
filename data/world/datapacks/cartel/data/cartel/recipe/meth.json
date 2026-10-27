@@ -1,0 +1,66 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "cartel",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sugar",
+    "minecraft:lapis_lazuli"
+  ],
+  "result": {
+    "id": "minecraft:prismarine_crystals",
+    "count": 3,
+    "components": {
+      "minecraft:lore": [
+        {
+          "text": "99,1% ren",
+          "color": "gray",
+          "italic": true
+        }
+      ],
+      "minecraft:enchantment_glint_override": true,
+      "minecraft:max_stack_size": 16,
+      "minecraft:consumable": {
+        "consume_seconds": 1.0,
+        "animation": "eat",
+        "sound": "minecraft:entity.generic.eat",
+        "has_consume_particles": true,
+        "on_consume_effects": [
+          {
+            "type": "minecraft:apply_effects",
+            "effects": [
+              {
+                "id": "minecraft:haste",
+                "amplifier": 2,
+                "duration": 1800,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:strength",
+                "amplifier": 0,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:nausea",
+                "amplifier": 0,
+                "duration": 300,
+                "show_icon": true
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:custom_model_data": {
+        "strings": [
+          "meth"
+        ]
+      },
+      "minecraft:item_name": {
+        "text": "Blue Sky Meth",
+        "color": "aqua",
+        "italic": false,
+        "bold": true
+      }
+    }
+  }
+}

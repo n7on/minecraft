@@ -1,0 +1,461 @@
+{
+  "criteria": {
+    "pet_of_dabodigo": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-1828026328,2098020407,-1182181824,-131611822]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-1828026328,2098020407,-1182181824,-131611822]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_SlowAndOld": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;1176040907,-776057514,-1901989831,1859678860]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;1176040907,-776057514,-1901989831,1859678860]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Rockrough": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-855750568,-2143533987,-1539256724,989174077]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-855750568,-2143533987,-1539256724,989174077]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_an7dud": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;1925236702,1800030725,-1976240873,-181920284]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;1925236702,1800030725,-1976240873,-181920284]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_timstrumpan": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-1193383537,759578737,-1835397271,-142786758]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-1193383537,759578737,-1835397271,-142786758]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_MrMobby6": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-1680227043,1004880934,-1380757642,-1083801473]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-1680227043,1004880934,-1380757642,-1083801473]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Zebaztizz": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;872401060,-1371979628,-1166345142,2068887527]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;872401060,-1371979628,-1166345142,2068887527]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_ClaimingYodaJarl": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-1270031483,-823638137,-2106632066,768961108]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-1270031483,-823638137,-2106632066,768961108]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Baddankan": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;418681929,72044446,-1104961965,1864836820]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;418681929,72044446,-1104961965,1864836820]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Badankan": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;1832874671,1979665203,-1374814054,-843072239]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;1832874671,1979665203,-1374814054,-843072239]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Mammakatten": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;-1302128429,1148275798,-1449412091,1279164218]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;-1302128429,1148275798,-1449412091,1279164218]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_VILLYBOI2012": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;17811516,1454526227,-1399844022,700141291]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;17811516,1454526227,-1399844022,700141291]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Tattush2": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;807987753,-611300267,-1784288151,1964007360]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;807987753,-611300267,-1784288151,1964007360]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Samii_Superman": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;656426831,248136369,-1462134181,-278623707]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;656426831,248136369,-1462134181,-278623707]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Emil7275": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;935671047,1746422676,-2048183068,1744219548]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;935671047,1746422676,-2048183068,1744219548]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_dud380": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;997716573,-1704571391,-1368271437,1973907849]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;997716573,-1704571391,-1368271437,1973907849]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of__Splash_n_Twx": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;0,0,589824,16317438]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;0,0,589824,16317438]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of_Ch1to007": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;724561807,1759003776,-1870890915,1414187796]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;724561807,1759003776,-1870890915,1414187796]}"
+            }
+          }
+        }
+      }
+    },
+    "pet_of__PowerXP8499": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:nbt": "{Owner:[I;0,0,589824,174409717]}"
+          }
+        },
+        "player": {
+          "type": "minecraft:inverted",
+          "term": {
+            "type": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "minecraft:nbt": "{UUID:[I;0,0,589824,174409717]}"
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Pure Evil"
+    },
+    "description": {
+      "text": "Döda någon annans husdjur"
+    },
+    "icon": {
+      "id": "minecraft:wither_skeleton_skull"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "parent": "servern:basta_van",
+  "requirements": [
+    [
+      "pet_of_dabodigo",
+      "pet_of_SlowAndOld",
+      "pet_of_Rockrough",
+      "pet_of_an7dud",
+      "pet_of_timstrumpan",
+      "pet_of_MrMobby6",
+      "pet_of_Zebaztizz",
+      "pet_of_ClaimingYodaJarl",
+      "pet_of_Baddankan",
+      "pet_of_Badankan",
+      "pet_of_Mammakatten",
+      "pet_of_VILLYBOI2012",
+      "pet_of_Tattush2",
+      "pet_of_Samii_Superman",
+      "pet_of_Emil7275",
+      "pet_of_dud380",
+      "pet_of__Splash_n_Twx",
+      "pet_of_Ch1to007",
+      "pet_of__PowerXP8499"
+    ]
+  ]
+}

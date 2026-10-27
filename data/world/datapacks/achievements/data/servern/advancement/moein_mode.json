@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ],
+  "parent": "servern:forsta_blodet",
+  "display": {
+    "title": {
+      "text": "Moein-mode"
+    },
+    "description": {
+      "text": "Dö 10 gånger inom ett dygn"
+    },
+    "icon": {
+      "id": "minecraft:skeleton_skull"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

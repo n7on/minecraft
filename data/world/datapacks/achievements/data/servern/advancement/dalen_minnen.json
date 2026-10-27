@@ -1,0 +1,146 @@
+{
+  "parent": "servern:dalen_hitta",
+  "criteria": {
+    "fabian": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "position": {
+                "x": {
+                  "min": -7085,
+                  "max": -7073
+                },
+                "y": {
+                  "min": 36,
+                  "max": 52
+                },
+                "z": {
+                  "min": -1653,
+                  "max": -1641
+                }
+              },
+              "dimension": "minecraft:overworld"
+            }
+          }
+        }
+      }
+    },
+    "kriget": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "position": {
+                "x": {
+                  "min": -7085,
+                  "max": -7073
+                },
+                "y": {
+                  "min": 36,
+                  "max": 52
+                },
+                "z": {
+                  "min": -1634,
+                  "max": -1622
+                }
+              },
+              "dimension": "minecraft:overworld"
+            }
+          }
+        }
+      }
+    },
+    "wardens": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "position": {
+                "x": {
+                  "min": -7059,
+                  "max": -7047
+                },
+                "y": {
+                  "min": 36,
+                  "max": 52
+                },
+                "z": {
+                  "min": -1653,
+                  "max": -1641
+                }
+              },
+              "dimension": "minecraft:overworld"
+            }
+          }
+        }
+      }
+    },
+    "moein": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "position": {
+                "x": {
+                  "min": -7059,
+                  "max": -7047
+                },
+                "y": {
+                  "min": 36,
+                  "max": 52
+                },
+                "z": {
+                  "min": -1634,
+                  "max": -1622
+                }
+              },
+              "dimension": "minecraft:overworld"
+            }
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "fabian"
+    ],
+    [
+      "kriget"
+    ],
+    [
+      "wardens"
+    ],
+    [
+      "moein"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Minnenas väktare"
+    },
+    "description": {
+      "text": "Besök alla fyra minnesrum under dalen"
+    },
+    "icon": {
+      "id": "minecraft:lectern"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

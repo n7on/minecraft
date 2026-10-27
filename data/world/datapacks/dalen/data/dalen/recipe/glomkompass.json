@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:ender_pearl",
+    "minecraft:obsidian",
+    "minecraft:obsidian",
+    "minecraft:totem_of_undying"
+  ],
+  "result": {
+    "id": "minecraft:compass",
+    "count": 1,
+    "components": {
+      "minecraft:item_name": {
+        "text": "Glömkompass",
+        "color": "gold",
+        "italic": false,
+        "bold": true
+      },
+      "minecraft:lore": [
+        {
+          "text": "Pekar mot den glömda dalen",
+          "color": "gray",
+          "italic": true
+        }
+      ],
+      "minecraft:enchantment_glint_override": true,
+      "minecraft:lodestone_tracker": {
+        "target": {
+          "dimension": "minecraft:overworld",
+          "pos": [
+            -7066,
+            71,
+            -1694
+          ]
+        },
+        "tracked": false
+      }
+    }
+  }
+}

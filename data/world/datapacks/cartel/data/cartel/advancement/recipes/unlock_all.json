@@ -1,0 +1,22 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "cartel:kokain",
+      "cartel:meth",
+      "cartel:weed",
+      "cartel:ecstasy",
+      "cartel:moeinwanda",
+      "cartel:eljefe"
+    ]
+  }
+}

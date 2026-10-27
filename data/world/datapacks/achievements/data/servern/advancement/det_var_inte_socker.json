@@ -1,0 +1,40 @@
+{
+  "criteria": {
+    "ate": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:brown_dye",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "moeinwanda"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Det där var inte socker"
+    },
+    "description": {
+      "text": "Ät en Moeinwanda"
+    },
+    "icon": {
+      "id": "minecraft:brown_dye"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "parent": "servern:forsta_snoret",
+  "requirements": [
+    [
+      "ate"
+    ]
+  ]
+}

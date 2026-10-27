@@ -1,0 +1,73 @@
+items:
+  dalen:glom_trim_template:
+    material: paper
+    data:
+      item_name: "<!i><gold>Glöm Armor Trim"
+      lore:
+        - "<!i><gray>Smithing template från den glömda dalen"
+    texture: dalen:item/glom_trim_template
+  dalen:hostvingar_template:
+    material: paper
+    data:
+      item_name: "<!i><gold>Höstvingar"
+      lore:
+        - "<!i><gray>Smithing template: elytra + guldtacka"
+    texture: dalen:item/hostvingar_template
+  dalen:host_elytra:
+    material: elytra
+    settings:
+      equipment:
+        slot: chest
+        asset-id: dalen:glom_elytra
+    data:
+      item_name: "<!i><gold>Höstvingar"
+    textures:
+      - dalen:item/glom_elytra
+      - dalen:item/glom_elytra_broken
+equipments:
+  dalen:glom_elytra:
+    type: component
+    wings: dalen:entity/equipment/wings/glom_elytra
+recipes:
+  dalen:glom_trim_duplicate:
+    type: shaped
+    category: misc
+    pattern:
+      - DTD
+      - DMD
+      - DDD
+    ingredients:
+      D: minecraft:diamond
+      T: dalen:glom_trim_template
+      M: minecraft:moss_block
+    result:
+      id: dalen:glom_trim_template
+      count: 2
+  dalen:hostvingar_duplicate:
+    type: shaped
+    category: misc
+    pattern:
+      - DTD
+      - DMD
+      - DDD
+    ingredients:
+      D: minecraft:diamond
+      T: dalen:hostvingar_template
+      M: minecraft:phantom_membrane
+    result:
+      id: dalen:hostvingar_template
+      count: 2
+  dalen:glom_trim:
+    type: smithing_trim
+    template_type: dalen:glom_trim_template
+    base: "#minecraft:trimmable_armor"
+    addition: "#minecraft:trim_materials"
+    pattern: dalen:glom
+  dalen:hostvingar:
+    type: smithing_transform
+    base: minecraft:elytra
+    addition: minecraft:gold_ingot
+    template_type: dalen:hostvingar_template
+    result:
+      id: dalen:host_elytra
+      count: 1

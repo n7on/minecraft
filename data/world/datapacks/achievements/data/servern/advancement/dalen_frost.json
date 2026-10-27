@@ -1,0 +1,42 @@
+{
+  "parent": "servern:dalen_boss",
+  "criteria": {
+    "book": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:enchanted_book",
+            "predicates": {
+              "minecraft:stored_enchantments": [
+                {
+                  "enchantments": "dalen:frost_aspect"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "book"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Frostbiten"
+    },
+    "description": {
+      "text": "Få Frost Aspect"
+    },
+    "icon": {
+      "id": "minecraft:enchanted_book"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

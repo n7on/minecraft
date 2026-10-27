@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ],
+  "parent": "servern:nykomling",
+  "display": {
+    "title": {
+      "text": "Ensam varg"
+    },
+    "description": {
+      "text": "Var helt ensam på servern i 3 timmar i rad"
+    },
+    "icon": {
+      "id": "minecraft:bone"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

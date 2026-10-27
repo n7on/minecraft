@@ -1,0 +1,18 @@
+lang#dalen:
+  en_us: &names
+    item.dalen.glom_log: Glömstam
+    item.dalen.stripped_glom_log: Skalad glömstam
+    item.dalen.glom_wood: Glömträ
+    item.dalen.stripped_glom_wood: Skalat glömträ
+    item.dalen.glom_planks: Glömplankor
+    item.dalen.glom_sapling: Glömplanta
+    item.dalen.glom_leaves: Glömlöv
+    item.dalen.glom_trapdoor: Glömlucka
+    item.dalen.glom_door: Glömdörr
+    item.dalen.glom_fence_gate: Glömgrind
+    item.dalen.glom_fence: Glömstaket
+    item.dalen.glom_pressure_plate: Glömtryckplatta
+    item.dalen.glom_button: Glömknapp
+    item.dalen.glom_slab: Glömslab
+    item.dalen.glom_stairs: Glömtrappa
+  sv_se: *names

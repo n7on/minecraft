@@ -1,0 +1,40 @@
+{
+  "parent": "servern:forsta_snoret",
+  "criteria": {
+    "ate": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "minecraft:glowstone_dust",
+          "components": {
+            "minecraft:custom_model_data": {
+              "strings": [
+                "eljefe"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Kartellkungen"
+    },
+    "description": {
+      "text": "Ät en El Jefe"
+    },
+    "icon": {
+      "id": "minecraft:glowstone_dust"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "ate"
+    ]
+  ]
+}

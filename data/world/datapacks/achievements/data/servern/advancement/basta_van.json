@@ -1,0 +1,28 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "tame": {
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Bästa vän"
+    },
+    "description": {
+      "text": "Tämj ditt första djur"
+    },
+    "icon": {
+      "id": "minecraft:bone"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "tame"
+    ]
+  ]
+}

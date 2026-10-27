@@ -1,0 +1,5 @@
+author: server
+version: 1.0
+description: Den glömda dalen - custom tree, blocks and items found only there
+namespace: dalen
+enable: true

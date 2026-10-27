@@ -1,0 +1,38 @@
+{
+  "parent": "servern:dalen_hitta",
+  "criteria": {
+    "t": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:paper",
+            "components": {
+              "minecraft:item_model": "dalen:glom_trim_template"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "t"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Glömd stil"
+    },
+    "description": {
+      "text": "Hitta en Glöm Armor Trim"
+    },
+    "icon": {
+      "id": "minecraft:paper"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

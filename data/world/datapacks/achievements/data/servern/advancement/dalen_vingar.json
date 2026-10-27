@@ -1,0 +1,52 @@
+{
+  "parent": "servern:dalen_hitta",
+  "criteria": {
+    "crafted": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:elytra",
+            "components": {
+              "minecraft:item_model": "dalen:host_elytra"
+            }
+          }
+        ]
+      }
+    },
+    "old": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:elytra",
+            "components": {
+              "minecraft:item_model": "dalen:glom_elytra"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafted",
+      "old"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Höstvingar"
+    },
+    "description": {
+      "text": "Ge en elytra höstvingar"
+    },
+    "icon": {
+      "id": "minecraft:elytra"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

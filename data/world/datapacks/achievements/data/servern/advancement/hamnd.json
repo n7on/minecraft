@@ -1,0 +1,28 @@
+{
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ],
+  "parent": "servern:forsta_blodet",
+  "display": {
+    "title": {
+      "text": "Hämnd"
+    },
+    "description": {
+      "text": "Döda den som dödade dig senast, inom 5 minuter"
+    },
+    "icon": {
+      "id": "minecraft:iron_sword"
+    },
+    "frame": "goal",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

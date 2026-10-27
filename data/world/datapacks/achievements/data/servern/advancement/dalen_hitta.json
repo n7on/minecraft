@@ -1,0 +1,39 @@
+{
+  "parent": "servern:root",
+  "criteria": {
+    "biome": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:location": {
+              "biomes": "dalen:glomda_dalen"
+            }
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "biome"
+    ]
+  ],
+  "display": {
+    "title": {
+      "text": "Den glömda dalen"
+    },
+    "description": {
+      "text": "Hitta den glömda dalen"
+    },
+    "icon": {
+      "id": "minecraft:compass"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  }
+}

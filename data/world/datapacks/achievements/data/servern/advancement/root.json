@@ -1,0 +1,26 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Servern"
+    },
+    "description": {
+      "text": "Serverns egna achievements"
+    },
+    "icon": {
+      "id": "minecraft:cake"
+    },
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "announce_to_chat": false,
+    "show_toast": false
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ]
+}

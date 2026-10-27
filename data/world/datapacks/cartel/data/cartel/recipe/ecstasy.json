@@ -1,0 +1,72 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "cartel",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:sugar",
+    "minecraft:pink_dye"
+  ],
+  "result": {
+    "id": "minecraft:pink_dye",
+    "count": 3,
+    "components": {
+      "minecraft:lore": [
+        {
+          "text": "Små rosa piller",
+          "color": "gray",
+          "italic": true
+        }
+      ],
+      "minecraft:enchantment_glint_override": true,
+      "minecraft:max_stack_size": 16,
+      "minecraft:consumable": {
+        "consume_seconds": 1.0,
+        "animation": "eat",
+        "sound": "minecraft:entity.generic.eat",
+        "has_consume_particles": true,
+        "on_consume_effects": [
+          {
+            "type": "minecraft:apply_effects",
+            "effects": [
+              {
+                "id": "minecraft:jump_boost",
+                "amplifier": 1,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:speed",
+                "amplifier": 0,
+                "duration": 1200,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:night_vision",
+                "amplifier": 0,
+                "duration": 2400,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:nausea",
+                "amplifier": 0,
+                "duration": 200,
+                "show_icon": true
+              }
+            ]
+          }
+        ]
+      },
+      "minecraft:custom_model_data": {
+        "strings": [
+          "ecstasy"
+        ]
+      },
+      "minecraft:item_name": {
+        "text": "Ecstasy",
+        "color": "light_purple",
+        "italic": false,
+        "bold": true
+      }
+    }
+  }
+}

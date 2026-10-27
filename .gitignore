@@ -1,7 +1,30 @@
 # Runtime state for the itzg/docker-minecraft-server container: world saves,
 # downloaded server jar/plugins/libraries, cache, logs, and player data
 # (whitelist/ops/bans). Regenerated on start or managed in-game — not tracked.
-data/
+# Exceptions below for hand-authored content that lives under data/ but isn't
+# regenerable (custom datapacks, CraftEngine's custom block/item configs) --
+# everything else in those directories (bundled libs, caches, defaults
+# shipped with the plugin) stays ignored.
+data/*
+!data/world
+data/world/*
+!data/world/datapacks
+data/world/datapacks/*
+!data/world/datapacks/dalen
+!data/world/datapacks/achievements
+!data/world/datapacks/cartel
+!data/world/datapacks/no-ghasts
+
+!data/plugins
+data/plugins/*
+!data/plugins/CraftEngine
+data/plugins/CraftEngine/*
+!data/plugins/CraftEngine/config.yml
+!data/plugins/CraftEngine/commands.yml
+!data/plugins/CraftEngine/resources
+data/plugins/CraftEngine/resources/*
+!data/plugins/CraftEngine/resources/dalen
+!data/plugins/CraftEngine/resources/kartell
 
 # Telegram bot secrets and runtime state
 telegram-bot/.env

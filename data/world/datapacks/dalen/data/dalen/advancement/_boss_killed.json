@@ -1,0 +1,25 @@
+{
+  "criteria": {
+    "k": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "minecraft:illusioner",
+            "minecraft:nbt": "{Tags:[\"dalen_boss\"]}"
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "k"
+    ]
+  ],
+  "rewards": {
+    "function": "dalen:boss/seger"
+  }
+}

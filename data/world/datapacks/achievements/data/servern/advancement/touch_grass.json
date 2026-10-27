@@ -1,0 +1,28 @@
+{
+  "parent": "servern:nykomling",
+  "criteria": {
+    "granted": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "title": {
+      "text": "Touch Grass"
+    },
+    "description": {
+      "text": "Spela mer än 8 timmar i rad på servern"
+    },
+    "icon": {
+      "id": "minecraft:short_grass"
+    },
+    "frame": "task",
+    "announce_to_chat": true,
+    "show_toast": true,
+    "hidden": false
+  },
+  "requirements": [
+    [
+      "granted"
+    ]
+  ]
+}

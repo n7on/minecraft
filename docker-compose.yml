@@ -51,7 +51,7 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: "PAPER"               # much lighter than vanilla; same client compatibility
-      VERSION: "26.2"
+      VERSION: "26.3"
       MEMORY: "8G"                # JVM heap (sets both -Xms and -Xmx)
       USE_AIKAR_FLAGS: "true"     # tuned G1GC flags, reduces lag spikes
       TZ: "Europe/Stockholm"
@@ -63,11 +63,9 @@ services:
       SIMULATION_DISTANCE: "12"   # vanilla default is 10; higher spreads the mob cap wider, so farms run a bit slower
       DIFFICULTY: "normal"
 
-      # Optional resource pack (textures for the cartel datapack items; see resourcepack/README.md).
-      # Players are asked on join; declining just shows the vanilla item textures.
-      RESOURCE_PACK: "https://raw.githubusercontent.com/n7on/minecraft/main/resourcepack/kartell-texturer.zip"
-      RESOURCE_PACK_SHA1: "4766cc6ba3981f7f5f3066c47603695d72ebb40a"
-      RESOURCE_PACK_ENFORCE: "FALSE"
+      # The resource pack is built and sent by CraftEngine (self-hosted over the game port, required).
+      # The cartel textures from resourcepack/src are merged in as the CraftEngine pack
+      # data/plugins/CraftEngine/resources/kartell. No RESOURCE_PACK here, or players get two packs.
       MOTD: "Minecraft server"
 
       # Access control
@@ -89,6 +87,8 @@ services:
       # unpinned slug fails to resolve on newer servers. Unpin once a newer release lists 26.2.
       # grimac removed: its packetevents kicks 26.x clients (incl. Geyser/Bedrock) on a
       # 1.21.11 server with "invalid packet". Re-add when fixed or after upgrading the server.
+      # craftengine adds the custom blocks/items for the "glömda dalen" area and builds its resource pack;
+      # pinned to a version id because it only publishes beta builds
       # chunky pre-generates terrain (/chunky start) so players load chunks from disk instead of generating them
       # tradecycle: cycle villager trades without any client mod (offhand-swap key in the trade UI,
       # or shift-right-click the villager; the latter also works for Bedrock players).
@@ -98,6 +98,7 @@ services:
         viabackwards
         tradecycle
         chunky
+        craftengine:mwFiNxVO
 
       # Bedrock support: Geyser translates Bedrock <-> Java, Floodgate lets Bedrock
       # players join with their Xbox account (no Java account needed).
