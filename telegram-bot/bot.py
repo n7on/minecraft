@@ -15,6 +15,7 @@ Two access tiers, keyed by Telegram user ID:
   prefix match on the whole command string, so e.g. an allow-list for
   "echo *" still lets "echo hi && whoami" run -- verified empirically).
 """
+import datetime
 import json
 import os
 import shutil
@@ -34,6 +35,7 @@ SETTINGS_FILE = str(BOT_DIR / "bot-settings.json")
 STATE_FILE = BOT_DIR / "state.json"
 LOG_FILE = BOT_DIR / "bot.log"
 API_BASE = f"https://api.telegram.org/bot{BOT_TOKEN}"
+RESET_HOUR = int(os.environ.get("RESET_HOUR", "3"))  # local time (host TZ); sessions never grow past one day
 
 AFFIRM = {"yes", "y", "confirm", "go ahead", "do it", "proceed"}
 DENY = {"no", "n", "cancel", "stop", "don't", "dont"}
@@ -232,11 +234,36 @@ def handle_message(chat_id, user_id, text, state):
     send_message(chat_id, reply)
 
 
+def reset_stale_sessions(state):
+    """Starts every chat fresh once a day at RESET_HOUR. A conversation left
+    to grow for days accumulates huge context -- expensive, and eventually
+    starts failing outright (seen: a session that reached ~190M cached
+    tokens and $100+ in cost before every call began failing)."""
+    now = datetime.datetime.now()
+    today = now.date().isoformat()
+    if now.hour < RESET_HOUR or state.get("_last_reset_date") == today:
+        return
+    for key, value in state.items():
+        if key.startswith("_") or not isinstance(value, dict):
+            continue
+        if value.get("session_id"):
+            value["session_id"] = None
+            value["pending"] = False
+            try:
+                send_message(int(key), "God morgon! Jag börjar om med minnet rent för dagen -- skriv bara igen om du behöver fortsätta med något.")
+            except Exception as e:
+                log(f"reset notice to {key} failed: {e}")
+    state["_last_reset_date"] = today
+    log("daily session reset done")
+
+
 def main():
     state = load_state()
     offset = state.get("_offset", 0)
     log("bot starting")
     while True:
+        reset_stale_sessions(state)
+        save_state(state)
         try:
             resp = api_call("getUpdates", {"offset": offset, "timeout": 30}, timeout=35)
         except Exception as e:
