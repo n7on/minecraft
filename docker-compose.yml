@@ -189,6 +189,9 @@ configs:
           entity-activation-range:
             monsters: 64            # default 32; mobs further from players barely tick (farms stall)
             flying-monsters: 64     # default 32; ghasts, phantoms
+          ticks-per:
+            hopper-transfer: 1      # default 8; hoppers move items 8x faster (can change redstone clock timing)
+            hopper-check: 1
 
   paper-global:
     content: |

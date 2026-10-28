@@ -4,7 +4,11 @@
   "category": "misc",
   "ingredients": [
     "minecraft:totem_of_undying",
-    "minecraft:gold_ingot",
+    "minecraft:gold_block",
+    "minecraft:gold_block",
+    "minecraft:diamond",
+    "minecraft:diamond",
+    "minecraft:blaze_powder",
     "minecraft:sugar"
   ],
   "result": {
@@ -18,7 +22,7 @@
           "italic": true
         },
         {
-          "text": "Svaga fiender runt dig i 8 block",
+          "text": "Krossar fiender inom 12 block",
           "color": "gray",
           "italic": true
         }
@@ -42,44 +46,50 @@
             "effects": [
               {
                 "id": "minecraft:strength",
-                "amplifier": 1,
-                "duration": 1200,
+                "amplifier": 2,
+                "duration": 1800,
                 "show_icon": true
               },
               {
                 "id": "minecraft:resistance",
-                "amplifier": 1,
-                "duration": 1200,
-                "show_icon": true
-              },
-              {
-                "id": "minecraft:regeneration",
-                "amplifier": 1,
-                "duration": 400,
-                "show_icon": true
-              },
-              {
-                "id": "minecraft:absorption",
                 "amplifier": 2,
-                "duration": 1200,
+                "duration": 1800,
                 "show_icon": true
               },
               {
                 "id": "minecraft:speed",
-                "amplifier": 1,
-                "duration": 1200,
+                "amplifier": 2,
+                "duration": 1800,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:absorption",
+                "amplifier": 3,
+                "duration": 1800,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:regeneration",
+                "amplifier": 2,
+                "duration": 500,
                 "show_icon": true
               },
               {
                 "id": "minecraft:fire_resistance",
                 "amplifier": 0,
-                "duration": 1200,
+                "duration": 2400,
+                "show_icon": true
+              },
+              {
+                "id": "minecraft:haste",
+                "amplifier": 1,
+                "duration": 1800,
                 "show_icon": true
               },
               {
                 "id": "minecraft:nausea",
                 "amplifier": 0,
-                "duration": 160,
+                "duration": 120,
                 "show_icon": true
               }
             ]

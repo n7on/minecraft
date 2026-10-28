@@ -38,8 +38,8 @@
           "monster": [
             {
               "type": "minecraft:zombified_piglin",
-              "count": 4,
-              "weight": 100
+              "count": 6,
+              "weight": 250
             },
             {
               "type": "minecraft:magma_cube",

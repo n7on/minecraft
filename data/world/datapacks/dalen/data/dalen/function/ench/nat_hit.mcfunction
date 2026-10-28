@@ -1,4 +1,5 @@
 # Victim of Spindelnät: a cobweb appears at their feet once they are at or below half health (5 s cooldown)
+execute unless entity @s[type=minecraft:player] run return 0
 execute if score @s dalen.natcd matches 1.. run return 0
 execute store result score @s dalen.hp run data get entity @s Health 100
 execute store result score @s dalen.maxhp run attribute @s minecraft:max_health get 100
